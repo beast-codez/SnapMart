@@ -1,0 +1,20 @@
+.img-container{
+    width: 60%;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+#login-img{
+    width: 40%;
+    height: 80%;
+}
+.login-img::after{
+    content: 'SnapMart';
+    position: absolute;
+    opacity: 1;
+    font-size: large;
+    top: 50%;
+    left: 50%;
+    z-index: 10;
+}

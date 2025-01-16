@@ -1,0 +1,39 @@
+
+html, body{
+  width: 100%;
+  height: 100%;
+}
+
+.flex-con{
+  display: flex;
+  align-items: center;
+}
+
+nav{
+  display: flex;
+  background-color: rgb(231, 231, 231);
+  align-items: center;
+
+}
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+
+.whole-cont {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+.home {
+  display: flex;
+  flex: 1;
+  margin-top: 56px;
+  width: 100%;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+}

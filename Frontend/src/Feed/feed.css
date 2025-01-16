@@ -1,0 +1,137 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.feed {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2x;
+  
+}
+.product {
+  display: flex;
+  width: 220px;
+  flex-direction: column;
+    height: 340px;
+  background-color: beige;
+  position: relative;
+  border: 0.3px solid rgba(128, 128, 128, 0.405) ;
+}
+.product img {
+  width: 95%;
+  height: 150px;
+  align-self: center;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+.product img:hover{
+  cursor: pointer;
+  scale: 1.02;
+}
+#title {
+  font-size: 20px;
+  font-weight: 500;
+  color: black;
+  margin-left: 5px;
+  display: inline;
+}
+#description {
+  font-size: 16px;
+  margin-left: 5px;
+  margin-top: 3px;
+  color: rgb(111, 111, 111);
+}
+#details {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  margin-left: 5px;
+  margin-top: 3px;
+}
+#rating {
+  font-size: 15px;
+  font-weight: 400;
+  margin-right: 30px;
+}
+#stock {
+  color: green;
+  font-weight: 600;
+  font-size: 16px;
+  position: absolute;
+  right: 10px;
+}
+#price {
+  margin-left: 5px;
+  margin-top: 3px;
+}
+.btn {
+  width: 95%;
+  background-color: rgb(93, 255, 93);
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  height: 30px;
+  border-radius: 4px;
+  font-size: 15px;
+  margin: 4px;
+  align-self: center;
+  transition: all 0.3s ease-in;
+}
+
+.half{
+    margin: 15px;
+}
+.full{
+    margin: 8px;
+}
+.error{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+.error-cont{
+  font-size: 30px;
+  align-self: center;
+  position: relative;
+  margin: auto;
+  display: block;
+}
+#retry{
+  align-self: center;
+  background-color: orange;
+  font-size: 20px;
+  border-radius: 8px;
+  width: 180px;
+  transition: all 0.2s ease-out;
+  padding: 5px;
+}
+#retry:hover{
+  background-color: red;
+  color: white;
+}
+.loader {
+  width: 45px;
+  height: 45px;
+  align-self: center;
+  position: relative;
+  margin: auto;
+  border-radius: 50%;
+  border: 5px solid transparent; 
+  border-top-color: rgb(25, 0, 255); 
+  animation: rotate 3s linear infinite; 
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
