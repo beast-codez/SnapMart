@@ -135,3 +135,19 @@ body {
     transform: rotate(360deg);
   }
 }
+.floater{
+  background-color: #ffc65c;
+  font-size: 15px;
+  border: 1px solid black;
+  border-radius: 3px;
+  height: 30px;
+  padding: 5px;
+  width: 300px;
+  position: absolute;
+  top: 65px;
+  left: 41%;
+  z-index: 1000;
+}
+.hidden{
+  display: none;
+}

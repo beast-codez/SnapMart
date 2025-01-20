@@ -4,16 +4,14 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 import User from "./userSchema.js";
-
+import Cart from './CartSchema.js';
 const app = express();
 const PORT = 5000;
-const SECRET_KEY = "your_secret_key";
+const SECRET_KEY = "iamlalith";
 
-// MongoDB connection URL
 const url =
   "mongodb+srv://test-user:Proml2006@webp.tnwerul.mongodb.net/snapmart";
 
-// Middleware
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -55,7 +53,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Protected Route
 app.get("/home", (req, res) => {
   const token = req.cookies.authToken;
   if (!token) {
@@ -97,10 +94,41 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.get('/fetch', (req,res)=>[
-  
-])
+app.post("/cart", async (req, res) => {
+  const { id } = req.body; 
+  const token = req.headers.authorization.split(" ")[1]; 
 
+  try {
+    const { email } = jwt.verify(token, SECRET_KEY);
+
+    const updatedUser = await Cart.findOneAndUpdate(
+      { email }, 
+      { $addToSet: { cart: id } }, 
+      { new: true } 
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Item added to cart", cart: updatedUser.cart });
+  } catch (error) {
+    console.error("Error updating cart:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+app.get("/fetchcart", (req, res) => {
+  const token = req.headers.authorization.split(" ")[1]; 
+  const { email } = jwt.verify(token, SECRET_KEY);
+  const cart = Cart.find({email : email }).cart;
+  if(!cart){
+    return res.json({message : 'no items in cart' , cart : null});
+  }
+  res.json({message : 'response sent ' , cart: cart});
+
+});
 app.post("/logout", (req, res) => {
   res.clearCookie("authToken", {
     httpOnly: true,

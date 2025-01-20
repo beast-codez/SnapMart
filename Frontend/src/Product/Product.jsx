@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Product.css";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 function Product({
   sidebar,
@@ -15,12 +15,24 @@ function Product({
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [suggestionsList, setSuggestionsList] = useState([]);
   const { id } = useParams();
   const [close, setClose] = useState(false);
+  const navigate = useNavigate();
+  const isFirstRender = useRef(true);
+
   const handleClose = () => {
     setClose(!close);
   };
-  
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+    } else {
+      navigate("/home");
+    }
+  }, [category, navigate]);
+
   useEffect(() => {
     const closeSignElement = document.getElementById("close-sign");
     if (closeSignElement) {
@@ -33,15 +45,18 @@ function Product({
     setError("");
 
     try {
+      console.log(id);
+      console.log(`https://dummyjson.com/products/${id}`);
+
       const res = await fetch(`https://dummyjson.com/products/${id}`);
       if (!res.ok) {
         throw new Error("Failed to fetch product data.");
       }
       const data = await res.json();
-      setProduct(data);
+      await setProduct(data);
+      console.log(data.category);
     } catch (err) {
       setError("Error occurred while fetching data...");
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -51,6 +66,31 @@ function Product({
     fetchProducts();
   }, [id]);
 
+  useEffect(() => {
+    if (!product || !category) 
+    setLoading(true);
+  }, [product, category]);
+  useEffect(() => {
+    if (product) {
+      console.log("product " + product);
+      const url = `${
+        product.category
+          ? `https://dummyjson.com/products/category/${product.category}`
+          : "https://dummyjson.com/products"
+      }`;
+      console.log(url);
+      fetch(url)
+        .then((res) => res.json())
+        .then((data) => {
+          const filteredProducts = data.products.filter(
+            (prod) => prod.id !== product.id
+          );
+          setSuggestionsList(filteredProducts);
+          setLoading(false);
+        })
+        .catch((error) => console.error("Error fetching products:", error));
+    }
+  }, [product]);
   if (error) {
     return (
       <div className="error">
@@ -78,7 +118,6 @@ function Product({
         setCategory={setCategory}
       />
       <div className="product-cont">
-        {/* Ensure sidebar is always rendered */}
         <div className={sidebar ? "sidebar-visible" : "sidebar-hidden"}>
           <Sidebar
             sidebar={sidebar}
@@ -94,7 +133,7 @@ function Product({
         >
           <div className="product-content">
             <div className="product-img">
-              <img src={product.thumbnail} alt={product.title} />
+              <img src={product.thumbnail || ""} alt={product.title || "N/A"} />
             </div>
 
             <h1 id="prod_title">{product.title}</h1>
@@ -106,79 +145,47 @@ function Product({
               </span>
             </p>
             <p id="prod_availability">
-              Availability: {product.availabilityStatus} (Stock: {product.stock}
-              )
+              Availability: {product.availabilityStatus || "N/A"} (Stock:{" "}
+              {product.stock || 0})
             </p>
             <p id="prod_rating">Rating: {product.rating} ⭐</p>
-
-            {/* Additional product information */}
-            <div className="additional-info">
-              <p>
-                <strong>Brand:</strong> {product.brand}
-              </p>
-              <p>
-                <strong>Category:</strong> {product.category}
-              </p>
-              <p>
-                <strong>SKU:</strong> {product.sku}
-              </p>
-              <p>
-                <strong>Weight:</strong> {product.weight} g
-              </p>
-              <p>
-                <strong>Dimensions:</strong> {product.dimensions.width} x{" "}
-                {product.dimensions.height} x {product.dimensions.depth} cm
-              </p>
-              <p>
-                <strong>Warranty:</strong> {product.warrantyInformation}
-              </p>
-              <p>
-                <strong>Shipping:</strong> {product.shippingInformation}
-              </p>
-              <p>
-                <strong>Return Policy:</strong> {product.returnPolicy}
-              </p>
-              <p>
-                <strong>Minimum Order Quantity:</strong>{" "}
-                {product.minimumOrderQuantity}
-              </p>
-            </div>
 
             <div className="product-actions">
               <button className="prod_btn">Add to Cart</button>
               <button className="prod_btn">Buy Now</button>
             </div>
-
-            {/* Product reviews */}
-            <div className="reviews">
-              <p id="reviews">Reviews</p>
-              {product.reviews.map((review, index) => (
-                <div className="comment" key={index}>
-                  <div className="comment-first">
-                    <p id="reviewerName">{review.reviewerName}</p>
-                    <p id="date">
-                      {new Date(review.date).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <p id="reviewerEmail">{review.reviewerEmail}</p>
-                  <div className="comment-second">
-                    <p id="comment">{review.comment}</p>
-                    <p id="rating">{review.rating} ⭐</p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
+
+        {/* Suggestions Container */}
         <div className={`suggestions ${close ? "hidden" : ""}`}>
-
-
+          <p id="sug_title">Similar Products for you</p>
+          {suggestionsList.length > 0 ? (
+            suggestionsList.map((item) => (
+              <div className="suggestion_item" key={item.id}>
+                <div className="image-container">
+                  <img src={item.thumbnail} alt={item.title} />
+                  <div className="details-container">
+                    <p>{item.title}</p>
+                    <p>{item.description.slice(0,40)}...</p>
+                    <p>{item.rating} ⭐</p>
+                    <p>${item.price}</p>
+                    <p>{item.availabilityStatus || "Available"}</p>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="no-suggestions">No suggestions available...</p>
+          )}
         </div>
+
+        {/* Close Button */}
         <div
           className={`close ${close ? "hidden-close" : ""}`}
           onClick={handleClose}
         >
-          <p id="close-sign">&#62;</p>
+          {close ? <p id="close-sign">&#62</p>: <p id="close-sign">&#60</p>}
         </div>
       </div>
     </div>

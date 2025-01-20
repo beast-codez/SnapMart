@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./feed.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Feed({ sidebar, category, search }) {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
+  const [float, setFloat] = useState("");
   const navigate = useNavigate();
   const fetchProducts = async () => {
     setLoading(true);
@@ -14,7 +16,6 @@ function Feed({ sidebar, category, search }) {
     let url = "https://dummyjson.com/products";
     if (category) {
       url = `https://dummyjson.com/products/category/${category}`;
-      
     } else if (search) {
       url = `https://dummyjson.com/products/search?q=${search}`;
     }
@@ -31,7 +32,16 @@ function Feed({ sidebar, category, search }) {
       setLoading(false);
     }
   };
-
+  const handlecart = async (id) => {
+    setLoading(true);
+    try {
+      const response = await axios.post("http://localhost:5000/cart", { id });
+      setFloat(response.data.message);
+    } catch (err) {
+      setError("Error adding product to the cart");
+      console.log(err);
+    }
+  };
   useEffect(() => {
     fetchProducts();
   }, [category, search]);
@@ -54,11 +64,12 @@ function Feed({ sidebar, category, search }) {
   if (!loading && products.length === 0) {
     return <p className="error-cont">No products available...</p>;
   }
-  const handleproduct=(id)=>{
+  const handleproduct = (id) => {
     navigate(`/product/:${id}`);
-  }
+  };
   return (
     <div className="feed">
+      <div className={`floater ${float ? "" : "hidden"}`}>{float}</div>
       {products.map((product) => (
         <div
           key={product.id}
@@ -77,7 +88,14 @@ function Feed({ sidebar, category, search }) {
             <p id="stock">{product.availabilityStatus}</p>
           </div>
           <p id="price">Price : ₹{Math.round(product.price * 80)}</p>
-          <button className="btn">Add to cart</button>
+          <button
+            className="btn"
+            onClick={() => {
+              handlecart(product.id);
+            }}
+          >
+            {loading ? "..." : "Add to cart"}
+          </button>
           <button className="btn">Buy now</button>
         </div>
       ))}
