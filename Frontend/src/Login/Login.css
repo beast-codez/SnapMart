@@ -15,7 +15,18 @@ body {
   
   background-color: #f0f2f5;
 }
-
+.loader_login {
+  width: 27px;
+  height: 27px;
+  align-self: center;
+  position: relative;
+  margin: auto;
+  border-radius: 50%;
+  border: 5px solid transparent; 
+  border-top-color: rgb(255, 255, 255); 
+  animation: rotate 3s linear infinite; 
+  align-self: center;
+}
 .outer-container {
   display: flex;
   justify-content: center;
@@ -89,6 +100,10 @@ body {
   font-size: 16px;
   cursor: pointer;
   margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
 }
 
 #btn:hover{

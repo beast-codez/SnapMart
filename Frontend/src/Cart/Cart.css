@@ -1,0 +1,237 @@
+/* Main container for cart */
+.cart-cont {
+  display: flex;
+  flex: 1;
+  margin-top: 56px;
+  width: 100%;
+  background-color: #f8f9fa;
+  transition: background-color 0.3s ease;
+}
+
+/* Sidebar styles */
+.sidebar-visible {
+  position: fixed;
+  width: 220px;
+  height: calc(100vh - 56px);
+  background-color: #ffffff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease, background-color 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto; /* Add scroll for the sidebar content */
+}
+
+.sidebar-hidden {
+  width: 80px;
+  position: fixed;
+  height: calc(100vh - 56px);
+  top: 56px;
+  left: 0;
+  background-color: #ffffff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease, background-color 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto; /* Add scroll for the sidebar content */
+}
+
+/* Cart details container */
+.cart-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+  height: calc(100vh - 56px); /* Full height minus navbar */
+  overflow-y: hidden; /* Prevent overflow from the container */
+}
+
+.with-sidebar {
+  margin-left: 240px;
+}
+
+.full-width {
+  margin-left: 80px;
+}
+
+/* Cart items container */
+.cart-items-cont {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto; /* Make it scrollable */
+  padding-right: 10px; /* Add padding for smooth scroll */
+}
+
+/* Cart item styles */
+.cart-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin-right: 20px;
+  width: 250px;
+  height: 400px;
+  margin-top: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cart-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cart-item-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.cart-item-image:hover {
+  transform: scale(1.1);
+}
+
+.cart-item-info {
+  padding: 15px;
+  text-align: center;
+  width: 100%;
+}
+
+.cart-item-info h3 {
+  font-size: 18px;
+  font-family: 'Trebuchet MS', Arial, sans-serif;
+  margin-bottom: 10px;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.cart-item-info p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.cart-item-info h3:hover {
+  color: #007bff;
+}
+
+/* Remove button styles */
+.remove-btn {
+  background-color: #ff4d4f;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 14px;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+#cart-title{
+    font-size: 35px;
+    color: blue;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.remove-btn:hover {
+  background-color: #cc0000;
+  transform: scale(1.1);
+}
+
+/* Empty cart styles */
+.empty-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 56px);
+  text-align: center;
+  background-color: #f8f9fa;
+  animation: fadeIn 0.5s ease;
+}
+
+.empty-cart p {
+  font-size: 20px;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.shop-now-btn {
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.shop-now-btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
+}
+
+/* Loader animation */
+.loader {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #007bff;
+  border-radius: 50%;
+  animation: spin 3s linear infinite;
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+/* Updated buy-cart styles */
+.buy-cart {
+  position: relative; /* Changed to absolute to position it within cart-cont */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Space out the content */
+  bottom: 0; /* Position it at the bottom of cart-cont */
+  left: 0; /* Align to the left edge */
+  background-color: rgb(102, 102, 255);
+  width: 100%; /* Ensure it spans the entire width of cart-cont */
+  height: 60px;
+  z-index: 1000;
+  padding: 0 20px; /* Add some padding for better spacing */
+  color: white; /* Ensure text is visible against the blue background */
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+#total-items{
+    font-size: 17px;
+    color: white;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    margin-left: 20px;
+    font-weight: bold;
+}
+/* Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.checkout-btn{
+    width: 100px;
+    height: 40px;
+    align-self: center;
+    background-color: #f3f3f3;
+}
+.checkout-btn:hover{
+    background-color: antiquewhite;
+}

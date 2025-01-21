@@ -8,14 +8,19 @@ const Login = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/login",
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
       if (response.data.message === "Login successful") {
         Cookies.set("authToken", response.data.token, { expires: 1 });
         setIsAuthenticated(true);
@@ -27,6 +32,8 @@ const Login = ({ setIsAuthenticated }) => {
       }
     } catch (error) {
       console.error("Login failed", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,10 +57,10 @@ const Login = ({ setIsAuthenticated }) => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-
             <button id="btn" type="submit">
-              Login
+              {!loading ? <p>Login</p> : <div className="loader_login"></div>}
             </button>
+
             <div className={message ? "message" : "hidden"}>
               <p id="message">{message}</p>
             </div>

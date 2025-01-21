@@ -35,11 +35,16 @@ function Feed({ sidebar, category, search }) {
   const handlecart = async (id) => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/cart", { id });
+      const response = await axios.post("http://localhost:5000/cart", { id } , {withCredentials : true});
       setFloat(response.data.message);
+      setTimeout(() => {
+        setFloat('')
+      }, 3000);
     } catch (err) {
       setError("Error adding product to the cart");
       console.log(err);
+    }finally{
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -74,9 +79,12 @@ function Feed({ sidebar, category, search }) {
         <div
           key={product.id}
           className={`product ${sidebar ? "half" : "full"}`}
-          onClick={() => navigate(`/product/${product.id}`)}
         >
-          <img src={product.images[0]} alt={product.title} />
+          <img
+            src={product.images[0]}
+            alt={product.title}
+            onClick={() => navigate(`/product/${product.id}`)}
+          />
           <p id="title">
             {product.title.length > 15
               ? product.title.slice(0, 15) + "..."

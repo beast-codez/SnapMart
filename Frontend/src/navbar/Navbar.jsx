@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import "./navbar.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
 const Navbar = ({ setSidebar, setSearch ,setCategory}) => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-
+  const location = useState('');
   const handleLogout = async () => {
     try {
       const response = await axios.post("http://localhost:5000/logout", null, {
@@ -25,6 +25,7 @@ const Navbar = ({ setSidebar, setSearch ,setCategory}) => {
     setSearch(formattedQuery.trim());
     setQuery('');
     setCategory('');
+    location.pathname !== '/home' && navigate('/home');
   };
 
   return (

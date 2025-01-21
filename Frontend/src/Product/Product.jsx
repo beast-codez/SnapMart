@@ -24,14 +24,21 @@ function Product({
   const handleClose = () => {
     setClose(!close);
   };
-
+  const handleSuggestionClick = (id) => {
+    console.log(`/product/${id}`);
+    navigate(`/product/${id}`);
+  };
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
+    if (!isFirstRender.current) {
+      if (category && product?.category && category !== product.category) {
+        navigate("/home");
+      }
     } else {
-      navigate("/home");
+      isFirstRender.current = false;
     }
-  }, [category, navigate]);
+  }, [category, navigate, product?.category]);
+
+
 
   useEffect(() => {
     const closeSignElement = document.getElementById("close-sign");
@@ -45,8 +52,7 @@ function Product({
     setError("");
 
     try {
-      console.log(id);
-      console.log(`https://dummyjson.com/products/${id}`);
+      
 
       const res = await fetch(`https://dummyjson.com/products/${id}`);
       if (!res.ok) {
@@ -54,7 +60,6 @@ function Product({
       }
       const data = await res.json();
       await setProduct(data);
-      console.log(data.category);
     } catch (err) {
       setError("Error occurred while fetching data...");
     } finally {
@@ -67,18 +72,15 @@ function Product({
   }, [id]);
 
   useEffect(() => {
-    if (!product || !category) 
-    setLoading(true);
+    if (!product || !category) setLoading(true);
   }, [product, category]);
   useEffect(() => {
     if (product) {
-      console.log("product " + product);
       const url = `${
         product.category
           ? `https://dummyjson.com/products/category/${product.category}`
           : "https://dummyjson.com/products"
       }`;
-      console.log(url);
       fetch(url)
         .then((res) => res.json())
         .then((data) => {
@@ -133,13 +135,16 @@ function Product({
         >
           <div className="product-content">
             <div className="product-img">
-              <img src={product.thumbnail || ""} alt={product.title || "N/A"} />
+              <img
+                src={product.thumbnail || "/img/defaultimg.png"}
+                alt={product.title || "N/A"}
+              />
             </div>
 
             <h1 id="prod_title">{product.title}</h1>
             <p id="prod_description">{product.description}</p>
             <p id="prod_price">
-              Price: ${product.price}{" "}
+              Price: ₹{Math.floor(product.price * 80)}{" "}
               <span className="discount">
                 ({product.discountPercentage}% off)
               </span>
@@ -154,6 +159,25 @@ function Product({
               <button className="prod_btn">Add to Cart</button>
               <button className="prod_btn">Buy Now</button>
             </div>
+            {/* Product reviews */}
+            <div className="reviews">
+              <p id="reviews">Reviews</p>
+              {product.reviews.map((review, index) => (
+                <div className="comment" key={index}>
+                  <div className="comment-first">
+                    <p id="reviewerName">{review.reviewerName}</p>
+                    <p id="date">
+                      {new Date(review.date).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <p id="reviewerEmail">{review.reviewerEmail}</p>
+                  <div className="comment-second">
+                    <p id="comment">{review.comment}</p>
+                    <p id="rating">{review.rating} ⭐</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -162,14 +186,18 @@ function Product({
           <p id="sug_title">Similar Products for you</p>
           {suggestionsList.length > 0 ? (
             suggestionsList.map((item) => (
-              <div className="suggestion_item" key={item.id}>
+              <div
+                className="suggestion_item"
+                key={item.id}
+                onClick={() => handleSuggestionClick(item.id)}
+              >
                 <div className="image-container">
                   <img src={item.thumbnail} alt={item.title} />
                   <div className="details-container">
                     <p>{item.title}</p>
-                    <p>{item.description.slice(0,40)}...</p>
+                    <p>{item.description.slice(0, 40)}...</p>
                     <p>{item.rating} ⭐</p>
-                    <p>${item.price}</p>
+                    <p>Price: ₹{Math.floor(item.price * 80)} </p>
                     <p>{item.availabilityStatus || "Available"}</p>
                   </div>
                 </div>
@@ -185,7 +213,7 @@ function Product({
           className={`close ${close ? "hidden-close" : ""}`}
           onClick={handleClose}
         >
-          {close ? <p id="close-sign">&#62</p>: <p id="close-sign">&#60</p>}
+          {close ? <span>&lt;</span> : <span>&gt;</span>}
         </div>
       </div>
     </div>

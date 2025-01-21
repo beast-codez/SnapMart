@@ -119,6 +119,7 @@ body {
   width: 45px;
   height: 45px;
   align-self: center;
+  justify-self: center;
   position: relative;
   margin: auto;
   border-radius: 50%;
@@ -147,6 +148,7 @@ body {
   top: 65px;
   left: 41%;
   z-index: 1000;
+  transition: all 0.2s ease;
 }
 .hidden{
   display: none;

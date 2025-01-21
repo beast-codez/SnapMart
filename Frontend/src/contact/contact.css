@@ -1,0 +1,182 @@
+/* Base layout */
+.contact-cont {
+  display: flex;
+  flex: 1;
+  margin-top: 56px;
+  height: calc(100vh - 56px); /* Set a fixed height for the container */
+  position: relative; /* Add this to contain fixed elements */
+}
+
+/* Sidebar styles */
+.sidebar-visible,
+.sidebar-hidden {
+  position: fixed;
+  height: calc(100vh - 56px);
+  background-color: #ffffff;
+  transition: width 0.3s ease;
+  z-index: 1000;
+}
+
+.sidebar-hidden {
+  width: 56px;
+  top: 56px;
+  left: 0;
+}
+
+/* Main content area - Fixed the scrolling issue */
+.contact-details {
+  margin-left: 250px;
+  flex: 1;
+  padding: 24px;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+  overflow-y: auto; /* Changed from hidden to auto to enable scrolling */
+  height: calc(100vh - 56px); /* Set height to viewport height minus navbar */
+}
+
+.contact-us-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #1a1a1a;
+}
+
+/* Rest of your styling */
+.contact-us-title {
+  font-size: 3rem;
+  background: linear-gradient(45deg, #007bff, #00bcd4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 16px;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideUp 0.6s ease forwards;
+}
+
+.contact-us-subtitle {
+  font-size: 1.25rem;
+  color: #666;
+  margin-bottom: 48px;
+  line-height: 1.6;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideUp 0.6s ease 0.2s forwards;
+}
+
+.contact-details .contact-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 20px;
+  height: auto; /* Allow content to determine height */
+  overflow: visible; /* Allow content to be visible */
+}
+
+.contact-item {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideUp 0.6s ease forwards;
+}
+
+.contact-item:nth-child(1) { animation-delay: 0.3s; }
+.contact-item:nth-child(2) { animation-delay: 0.4s; }
+.contact-item:nth-child(3) { animation-delay: 0.5s; }
+.contact-item:nth-child(4) { animation-delay: 0.6s; }
+
+.contact-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.contact-item h2 {
+  font-size: 1.5rem;
+  color: #ff9900;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.contact-item p {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin: 12px 0;
+  line-height: 1.6;
+}
+
+.contact-item a {
+  text-decoration: none;
+  color: #007bff;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.contact-item a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: #007bff;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+
+.contact-item a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Responsive adjustments */
+.contact-details.with-sidebar {
+  margin-left: 220px;
+}
+
+.contact-details.full-width {
+  margin-left: 56px;
+}
+
+/* Animation keyframes */
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .contact-us-title {
+    font-size: 2.5rem;
+  }
+  
+  .contact-us-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .contact-item {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-us-title {
+    font-size: 2rem;
+  }
+  
+  .contact-details {
+    gap: 20px;
+    padding: 10px;
+  }
+}
