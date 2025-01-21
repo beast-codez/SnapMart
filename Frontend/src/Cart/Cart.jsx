@@ -17,6 +17,7 @@ function Cart({
   const [cart, setCart] = useState([]);
   const [floater , setFloater] = useState('')
   const [change , setChange] = useState([]);
+  const [total, setTotal] = useState(0);
     const navigate = useNavigate();
     const handleRemove = async (id) => {
       try {
@@ -68,7 +69,13 @@ function Cart({
 
     fetchCart();
   }, [change]);
-
+  useEffect(()=>{
+    let k=0;
+    cart.map((prod)=>{
+        k+=Math.floor(prod.price*80);
+    })
+    setTotal(k);
+  },[cart])
   if (loading) {
     return <div className="loader"></div>;
   }
@@ -128,10 +135,10 @@ function Cart({
               ))}
             </div>
 
-            {/* Buy Cart Section */}
             <div className="buy-cart">
               <p id="total-items">Total items: {cart.length}</p>
-              <button className="checkout-btn">Checkout</button>
+              <p id="total-cost"> Total Amount:{total} rs</p>
+              <button className="checkout-btn">Buy now</button>
             </div>
           </div>
         </div>
