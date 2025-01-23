@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./orders.css";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const Orders = ({
   sidebar,
   setSidebar,
@@ -13,30 +14,48 @@ const Orders = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState([]);
-
+  const navigate =  useNavigate();
   useEffect(() => {
-    setLoading(true);
-    const orderProduct = {
-      id: "1",
-      orderDate: "21-01-2025",
-      status: "Ordered",
-      address: "Tirupati, Andhra Pradesh",
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+
+        // Fetch past orders
+        const response = await axios.get("http://localhost:5000/pastOrders", {
+          withCredentials: true,
+        });
+
+        if (response.data.pastOrders === null) {
+          setOrders([]);
+          setLoading(false);
+          return;
+        }
+
+        // Fetch product details for each order
+        const ordersWithDetails = await Promise.all(
+          response.data.pastOrders.map(async (orderProduct) => {
+            const productResponse = await fetch(
+              `https://dummyjson.com/products/${orderProduct.id}`
+            );
+            const productData = await productResponse.json();
+            return {
+              ...productData,
+              orderDate: orderProduct.orderDate,
+              status: orderProduct.status,
+              address: orderProduct.address,
+            };
+          })
+        );
+
+        setOrders(ordersWithDetails);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetch(`https://dummyjson.com/products/${orderProduct.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setOrders([
-          {
-            ...data,
-            orderDate: orderProduct.orderDate,
-            status: orderProduct.status,
-            address: orderProduct.address,
-          },
-        ]);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false)); // Handle potential errors gracefully.
+    fetchOrders();
   }, []);
 
   if (loading) {
@@ -47,7 +66,7 @@ const Orders = ({
     return (
       <div className="no-orders">
         <p id="orders-info">No orders yet</p>
-        <button className="order-btn">Order now</button>
+        <button className="order-btn" onClick={()=>navigate('/home')}>Order now</button>
       </div>
     );
   }
@@ -71,7 +90,7 @@ const Orders = ({
         <div
           className={`order-details ${sidebar ? "with-sidebar" : "full-width"}`}
         >
-            <p id="heading">Your orders</p>
+          <p id="heading">Your orders</p>
           {orders.map((order) => (
             <div className="order-products" key={order.id}>
               <img

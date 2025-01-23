@@ -8,6 +8,8 @@ function Feed({ sidebar, category, search }) {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
   const [float, setFloat] = useState("");
+
+  
   const navigate = useNavigate();
   const fetchProducts = async () => {
     setLoading(true);
@@ -32,18 +34,25 @@ function Feed({ sidebar, category, search }) {
       setLoading(false);
     }
   };
+  const handleBuy = async (id) => {
+    navigate("/buy", { state: [id] });
+  };
   const handlecart = async (id) => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/cart", { id } , {withCredentials : true});
+      const response = await axios.post(
+        "http://localhost:5000/cart",
+        { id },
+        { withCredentials: true }
+      );
       setFloat(response.data.message);
       setTimeout(() => {
-        setFloat('')
+        setFloat("");
       }, 3000);
     } catch (err) {
       setError("Error adding product to the cart");
       console.log(err);
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -104,7 +113,14 @@ function Feed({ sidebar, category, search }) {
           >
             {loading ? "..." : "Add to cart"}
           </button>
-          <button className="btn">Buy now</button>
+          <button
+            className="btn"
+            onClick={() => {
+              handleBuy(product.id);
+            }}
+          >
+            Buy now
+          </button>
         </div>
       ))}
     </div>

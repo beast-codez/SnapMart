@@ -3,9 +3,9 @@ import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import User from "./userSchema.js";
-import Cart from './CartSchema.js';
-import Order from './OrderSchema.js'
-import mongoose from 'mongoose'
+import Cart from "./CartSchema.js";
+import Order from "./OrderSchema.js";
+import mongoose from "mongoose";
 const app = express();
 const PORT = 5000;
 const SECRET_KEY = "your_secret_key";
@@ -15,9 +15,9 @@ const url =
 
 app.use(
   cors({
-    origin: "http://localhost:3000", 
+    origin: "http://localhost:3000",
     methods: "GET,POST",
-    credentials: true, 
+    credentials: true,
   })
 );
 
@@ -29,26 +29,31 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Failed to connect to MongoDB", err));
 
-app.get('/', (req,res)=>{
+app.get("/", (req, res) => {
   res.send("Welcome to backend , the hidden world beneath a website");
-})
+});
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
-    if (!user ) {
+    if (!user) {
       return res.json({ message: "No user registered with this email" });
     }
-    if(user.password !== password){
+    if (user.password !== password) {
       return res.json({ message: "wrong passsword" });
     }
-    const token = jwt.sign({ email: email //user.email 
-    }, SECRET_KEY, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      {
+        email: email, //user.email
+      },
+      SECRET_KEY,
+      {
+        expiresIn: "1d",
+      }
+    );
 
-    res.cookie("authToken", token, { httpOnly: true, maxAge: 86400000 }); 
+    res.cookie("authToken", token, { httpOnly: true, maxAge: 86400000 });
     res.json({ message: "Login successful" });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
@@ -149,18 +154,17 @@ app.post("/cart", async (req, res) => {
   }
 });
 
-
-
-
-app.get('orders', (req,res)=>{
-  const token = req.headers.authorization.split(" ")[1];
-  const { email } = jwt.verify(token, SECRET_KEY);
-  const orders = Order.find({email : email}).orders;
-  if(!orders){
-    return res.json({message : 'no orders placed', orders : null})
+app.get("pastOrders", (req, res) => {
+  const token = req.cookies.authToken;
+  const decoded = jwt.verify(token, SECRET_KEY);
+  const { email } = decoded;
+  const orders = Order.findOne({ email: email }).orders;
+  if (!orders) {
+    return res.json({ message: "no orders placed", orders: null });
   }
-  res.json({message : 'items fetched successfully ', orders : orders})
-})
+  
+  res.json({ message: "items fetched successfully ", orders: orders });
+});
 
 app.get("/fetchcart", async (req, res) => {
   const token = req.cookies.authToken;
@@ -234,12 +238,11 @@ app.post("/removeFromCart", async (req, res) => {
   }
 });
 
-
 app.post("/logout", (req, res) => {
   res.clearCookie("authToken", {
     httpOnly: true,
-    secure: false, 
-    sameSite: "strict", 
+    secure: false,
+    sameSite: "strict",
   });
   res.status(200).json({ message: "Logged out successfully" });
 });

@@ -14,6 +14,7 @@ import Product from "./Product/Product";
 import Cart from "./Cart/Cart";
 import Orders from "./orders/Orders";
 import Contact from "./contact/Contact"
+import Buy from "./Buy/Buy";
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebar, setSidebar] = useState(true);
@@ -137,6 +138,23 @@ const App = () => {
           element={
             isAuthenticated ? (
               <Contact
+                sidebar={sidebar}
+                setSidebar={setSidebar}
+                category={category}
+                setCategory={setCategory}
+                search={search}
+                setSearch={setSearch}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/buy"
+          element={
+            isAuthenticated ? (
+              <Buy
                 sidebar={sidebar}
                 setSidebar={setSidebar}
                 category={category}

@@ -1,0 +1,59 @@
+.product-cont {
+  display: flex;
+  flex: 1;
+  margin-top: 56px;
+  width: 100%;
+  background-color: #f8f9fa;
+  transition: background-color 0.3s ease;
+  overflow: hidden;
+}
+
+/* Sidebar styles */
+.sidebar-visible {
+  position: fixed;
+  width: 220px;
+  height: calc(100vh - 56px);
+  background-color: #ffffff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease, background-color 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto; /* Add scroll for the sidebar content */
+}
+
+.sidebar-hidden {
+  width: 56px;
+  position: fixed;
+  height: calc(100vh - 56px);
+  top: 56px;
+  left: 0;
+  background-color: #ffffff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease, background-color 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto; /* Add scroll for the sidebar content */
+}
+
+/* Cart details container */
+.buy-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+  height: calc(100vh - 56px); /* Full height minus navbar */
+  overflow-y: hidden; /* Prevent overflow from the container */
+}
+
+.with-sidebar {
+  margin-left: 240px;
+}
+
+.full-width {
+  margin-left: 80px;
+}
+#buy-items{
+    color: blue;
+    font-size: 35px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    
+}

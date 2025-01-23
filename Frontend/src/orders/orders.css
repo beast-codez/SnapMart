@@ -75,15 +75,24 @@ html {
 .order-details.full-width {
   margin-left: 56px;
 }
+.no-orders {
+  align-self: center;
+  justify-self: center;
+}
 #orders-info {
   margin: auto;
+
   position: relative;
-  font-size: 30px;
+  font-size: 35px;
+  color: red;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-weight: bold;
 }
 .order-btn {
   background-color: orange;
-  width: 100px;
-  height: 30px;
+  width: 200px;
+  height: 50px;
 }
 
 .order-products {

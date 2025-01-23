@@ -18,9 +18,13 @@ body {
   width: 220px;
   flex-direction: column;
     height: 340px;
-  background-color: beige;
+  background-color: rgb(255, 255, 255);
   position: relative;
   border: 0.3px solid rgba(128, 128, 128, 0.405) ;
+}
+.product:hover{
+  transform: translate(0px -20px);
+  box-shadow: 4px 2px 15px gray;
 }
 .product img {
   width: 95%;
@@ -70,7 +74,7 @@ body {
   margin-top: 3px;
 }
 .btn {
-  width: 95%;
+  width: 90%;
   background-color: rgb(93, 255, 93);
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
@@ -81,7 +85,9 @@ body {
   align-self: center;
   transition: all 0.3s ease-in;
 }
-
+.btn:hover{
+  scale: 1.03;
+}
 .half{
     margin: 15px;
 }

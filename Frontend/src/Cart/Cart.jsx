@@ -15,49 +15,67 @@ function Cart({
 }) {
   const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState([]);
-  const [floater , setFloater] = useState('')
-  const [change , setChange] = useState([]);
+  const [floater, setFloater] = useState("");
+  const [change, setChange] = useState([]);
   const [total, setTotal] = useState(0);
-    const navigate = useNavigate();
-    const handleRemove = async (id) => {
-      try {
-        const response = await axios.post(
-          "http://localhost:5000/removeFromCart",
-          { id }, // Pass the product ID
-          { withCredentials: true } // Include credentials (cookies)
-        );
+  const [buyItems, setBuyItems] = useState([]);
+  const navigate = useNavigate();
+  const handleRemove = async (id) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/removeFromCart",
+        { id }, // Pass the product ID
+        { withCredentials: true } // Include credentials (cookies)
+      );
 
-        if (response.data.message === "error") {
-          setFloater("Error occurred, try again later");
-          return;
-        }
-        setChange(response.data.cart);
-        
-        setFloater("Successfully removed item");
-      } catch (error) {
-        console.error("Error removing item:", error);
+      if (response.data.message === "error") {
         setFloater("Error occurred, try again later");
+        return;
       }
-    };
+      setChange(response.data.cart);
+
+      setFloater("Successfully removed item");
+    } catch (error) {
+      console.error("Error removing item:", error);
+      setFloater("Error occurred, try again later");
+    }
+  };
 
   useEffect(() => {
     const fetchCart = async () => {
       setLoading(true);
 
       try {
-        const response = await axios.get("http://localhost:5000/fetchcart", {withCredentials : true});
+        const response = await axios.get("http://localhost:5000/fetchcart", {
+          withCredentials: true,
+        });
 
         if (!response.data.cart || response.data.cart.length === 0) {
           setCart(null);
         } else {
-          const productPromises = response.data.cart.map((id) =>
-            fetch(`https://dummyjson.com/products/${id}`).then((res) =>
-              res.json()
-            )
-          );
+          try {
+            // Map over the cart items to create an array of promises
+            setBuyItems(response.data.cart);
+            const productPromises = response.data.cart.map((id) =>
+              fetch(`https://dummyjson.com/products/${id}`).then((res) => {
+                if (!res.ok) {
+                  throw new Error(`Failed to fetch product with ID: ${id}`);
+                }
+                return res.json();
+              })
+            );
 
-          const products = await Promise.all(productPromises);
-          setCart(products);
+            // Wait for all promises to resolve
+            const products = await Promise.all(productPromises);
+
+            // Update the cart state with fetched product data
+            setCart(products);
+          } catch (error) {
+            console.error("Error fetching cart products:", error);
+          } finally {
+            // Optionally handle any post-fetching cleanup or state updates
+            setLoading(false);
+          }
         }
       } catch (error) {
         console.error("Error fetching cart data:", error);
@@ -69,13 +87,13 @@ function Cart({
 
     fetchCart();
   }, [change]);
-  useEffect(()=>{
-    let k=0;
-    cart.map((prod)=>{
-        k+=Math.floor(prod.price*80);
-    })
+  useEffect(() => {
+    let k = 0;
+    cart.map((prod) => {
+      k += Math.floor(prod.price * 80);
+    });
     setTotal(k);
-  },[cart])
+  }, [cart]);
   if (loading) {
     return <div className="loader"></div>;
   }
@@ -84,7 +102,9 @@ function Cart({
     return (
       <div className="empty-cart">
         <p>Your cart is empty. Start shopping now!</p>
-        <button className="shop-now-btn" onClick={()=>navigate('/home')}>Shop Now</button>
+        <button className="shop-now-btn" onClick={() => navigate("/home")}>
+          Shop Now
+        </button>
       </div>
     );
   }
@@ -122,7 +142,7 @@ function Cart({
                   />
                   <div className="cart-item-info">
                     <h3>{product.title}</h3>
-                    <p>Price: ${product.price}</p>
+                    <p>Price: Rs.{Math.floor(product.price * 80)}</p>
                     <p>Stock: {product.stock}</p>
                     <button
                       className="remove-btn"
@@ -138,7 +158,10 @@ function Cart({
             <div className="buy-cart">
               <p id="total-items">Total items: {cart.length}</p>
               <p id="total-cost"> Total Amount:{total} rs</p>
-              <button className="checkout-btn">Buy now</button>
+              <button className="checkout-btn"
+               onClick={()=>{
+                navigate('/buy', {state : buyItems})
+               }}>Buy now</button>
             </div>
           </div>
         </div>
