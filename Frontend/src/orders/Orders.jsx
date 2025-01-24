@@ -25,13 +25,13 @@ const Orders = ({
           withCredentials: true,
         });
 
-        if (response.data.pastOrders === null) {
+        if (response.data.pastOrders === null || []) {
           setOrders([]);
+          console.log("no orders");
           setLoading(false);
           return;
         }
 
-        // Fetch product details for each order
         const ordersWithDetails = await Promise.all(
           response.data.pastOrders.map(async (orderProduct) => {
             const productResponse = await fetch(

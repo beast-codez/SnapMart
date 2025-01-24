@@ -4,6 +4,7 @@ import "./Buy.css";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
 import axios from "axios";
+import handleBuy from "./HandleBuy";
 const currentDate = new Date();
 const Buy = ({
   sidebar,
@@ -18,8 +19,18 @@ const Buy = ({
 
   const [total, setTotal] = useState(0);
   const { state } = useLocation();
-  const futureDate = new Date(currentDate); 
+  const futureDate = new Date(currentDate);
   futureDate.setDate(futureDate.getDate() + 2);
+  const handlePayment = (total) => {
+    const amount = total; 
+    const userDetails = {
+      name: "John Doe",
+      email: "johndoe@example.com",
+      phone: "9876543210",
+    };
+
+    handleBuy(amount, userDetails, buyItems);
+  };
   useEffect(() => {
     let k = 0;
     buyItems.map((prod) => {
@@ -27,7 +38,7 @@ const Buy = ({
     });
     setTotal(k);
   }, [buyItems]);
-  
+
   useEffect(() => {
     setLoading(true);
     const products = state || [];
@@ -39,6 +50,7 @@ const Buy = ({
         });
     });
     setLoading(false);
+    const resp = axios.post('http://localhost:5000/addOrder',{ buyItems}, {withCredentials: true});
   }, []);
   return (
     <div className="whole-cont">
@@ -75,7 +87,6 @@ const Buy = ({
                     <h3>{product.title}</h3>
                     <p>Price: Rs.{Math.floor(product.price * 80)}</p>
                     <p>Stock: {product.stock}</p>
-                    
                   </div>
                 </div>
               ))}
@@ -85,7 +96,7 @@ const Buy = ({
               <p id="total-items">Total items: {buyItems.length}</p>
               <p id="total-cost"> Total Amount:{total} rs</p>
               <p id="deliver-date">{futureDate.toDateString()}</p>
-              <button className="checkout-btn">Buy now</button>
+              <button className="checkout-btn" onClick={()=>handlePayment(total)}>Buy now</button>
             </div>
           </div>
         )}

@@ -6,12 +6,18 @@ import User from "./userSchema.js";
 import Cart from "./CartSchema.js";
 import Order from "./OrderSchema.js";
 import mongoose from "mongoose";
-const app = express();
-const PORT = 5000;
-const SECRET_KEY = "your_secret_key";
+import bodyParser from "body-parser";
+import Razorpay from "razorpay";
+import crypto from "crypto";
+import dotenv from "dotenv";
 
+dotenv.config();
+const app = express();
+const PORT = process.env.port || 5000;
+const SECRET_KEY = "your_secret_key";
+app.use(bodyParser.json());
 const url =
-  "mongodb+srv://test-user:Proml2006@webp.tnwerul.mongodb.net/snapmart";
+  "mongodb+srv://test-user:Proml2006@webp.tnwerul.mongodb.net/snapmart?retryWrites=true&w=majority";
 
 app.use(
   cors({
@@ -28,6 +34,11 @@ mongoose
   .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Failed to connect to MongoDB", err));
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_ZVQ2L1E9GmVXLm",
+  key_secret: process.env.RAZORPAY_SECRET || "KLlVbYbi1twlVmlsTnGOWCj4",
+});
 
 app.get("/", (req, res) => {
   res.send("Welcome to backend , the hidden world beneath a website");
@@ -154,15 +165,111 @@ app.post("/cart", async (req, res) => {
   }
 });
 
-app.get("pastOrders", (req, res) => {
+app.post("/api/payment/order", async (req, res) => {
+  const { amount, userDetails } = req.body;
+
+  try {
+    const options = {
+      amount: amount,
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    };
+
+    const order = await razorpay.orders.create(options);
+    res.json({
+      success: true,
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      key: razorpay.key_id,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Error creating order", error });
+  }
+});
+
+// Verify payment
+app.post("/api/payment/verify", (req, res) => {
+  const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+    req.body;
+
+  const generatedSignature = crypto
+    .createHmac("sha256", razorpay.key_secret)
+    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+    .digest("hex");
+
+  if (generatedSignature === razorpay_signature) {
+    res.json({ success: true, message: "Payment verified successfully" });
+  } else {
+    res
+      .status(400)
+      .json({ success: false, message: "Payment verification failed" });
+  }
+});
+
+app.post("/addOrder", async (req, res) => {
+  try {
+    const token = req.cookies.authToken;
+
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const { email } = decoded;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const address = user.address;
+
+    const details = req.body; 
+    const orderPromises = details.map(async (product) => {
+      const response = await fetch(
+        `https://dummyjson.com/products/${product.id}`
+      );
+      const prod = await response.json();
+
+      return Order.findOneAndUpdate(
+        { email },
+        {
+          $push: {
+            order: {
+              id: prod.id,
+              orderDate: new Date(),
+              status: "pending",
+              address,
+            },
+          },
+        },
+        { new: true, upsert: true }
+      );
+    });
+
+    const updatedOrders = await Promise.all(orderPromises);
+
+    res
+      .status(200)
+      .json({ message: "Orders updated successfully", updatedOrders });
+  } catch (error) {
+    console.error("Error updating orders:", error);
+    res.status(500).json({ message: "Failed to update orders", error });
+  }
+});
+
+app.get("/pastOrders", (req, res) => {
   const token = req.cookies.authToken;
   const decoded = jwt.verify(token, SECRET_KEY);
   const { email } = decoded;
-  const orders = Order.findOne({ email: email }).orders;
-  if (!orders) {
-    return res.json({ message: "no orders placed", orders: null });
-  }
-  
+  Order.findOne({ email: "lalithvedium456@gmail.com" }, "order").then(
+    (result) => {
+      const orders = result.order;
+      if (!orders) {
+        console.log(" no orders");
+        return res.json({ message: "no orders placed", orders: null });
+      }
+    }
+  );
+
   res.json({ message: "items fetched successfully ", orders: orders });
 });
 
