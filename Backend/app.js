@@ -14,10 +14,10 @@ import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 const PORT = process.env.port || 5000;
-const SECRET_KEY = "your_secret_key";
+const SECRET_KEY = process.env.SECRET_KEY;
 app.use(bodyParser.json());
 const url =
-  "mongodb+srv://test-user:Proml2006@webp.tnwerul.mongodb.net/snapmart?retryWrites=true&w=majority";
+  process.env.url;
 
 app.use(
   cors({
@@ -36,8 +36,8 @@ mongoose
   .catch((err) => console.error("Failed to connect to MongoDB", err));
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_ZVQ2L1E9GmVXLm",
-  key_secret: process.env.RAZORPAY_SECRET || "KLlVbYbi1twlVmlsTnGOWCj4",
+  key_id: process.env.RAZORPAY_KEY_ID ,
+  key_secret: process.env.RAZORPAY_SECRET ,
 });
 
 app.get("/", (req, res) => {
