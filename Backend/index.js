@@ -21,7 +21,7 @@ const url =
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://snap-mart.netlify.app/",
     methods: "GET,POST",
     credentials: true,
   })
