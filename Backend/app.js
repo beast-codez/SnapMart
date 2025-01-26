@@ -63,8 +63,13 @@ app.post("/login", async (req, res) => {
         expiresIn: "1d",
       }
     );
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
 
-    res.cookie("authToken", token, { httpOnly: true, maxAge: 86400000 });
     res.json({ message: "Login successful" });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
@@ -74,14 +79,22 @@ app.post("/login", async (req, res) => {
 app.get("/home", (req, res) => {
   const token = req.cookies.authToken;
   if (!token) {
-    return res.status(401).json({ message: "Not authorized" });
+    return res
+      .status(401)
+      .json({ authenticated: false, message: "Not authorized" });
   }
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    res.json({ message: `Welcome ${decoded.email} to the Home page!` });
+    res.json({
+      authenticated: true,
+      message: `Welcome ${decoded.email} to the Home page!`,
+    });
   } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+    res.status(401).json({
+      authenticated: false,
+      message: "Invalid token",
+    });
   }
 });
 app.post("/signup", async (req, res) => {
@@ -109,6 +122,21 @@ app.post("/signup", async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });
     console.log(error);
+  }
+});
+
+app.get("/token", (req, res) => {
+  const token = req.cookies.authToken; // Extract the token
+  if (!token) {
+    return res.json({ authenticated: false });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY); // Verify the token
+    res.json({ authenticated: true, email: decoded.email });
+  } catch (error) {
+    console.error("Token verification failed:", error.message);
+    res.json({ authenticated: false });
   }
 });
 
@@ -166,7 +194,8 @@ app.post("/cart", async (req, res) => {
 });
 
 app.post("/api/payment/order", async (req, res) => {
-  const { amount, userDetails } = req.body;
+  console.log("order");
+  const { amount } = req.body;
 
   try {
     const options = {
@@ -184,14 +213,13 @@ app.post("/api/payment/order", async (req, res) => {
       key: razorpay.key_id,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Error creating order", error });
+    console.log(error);
   }
 });
 
 // Verify payment
 app.post("/api/payment/verify", (req, res) => {
+  console.log("verify");
   const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
     req.body;
 
@@ -209,69 +237,91 @@ app.post("/api/payment/verify", (req, res) => {
   }
 });
 
-app.post("/addOrder", async (req, res) => {
+// app.post("/addOrder", async (req, res) => {
+//   try {
+//     const token = req.cookies.authToken;
+
+//     const decoded = jwt.verify(token, SECRET_KEY);
+//     const { email } = decoded;
+
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     const address = user.address;
+
+//     const {details} = req.body;
+//     console.log(checkType(details));
+//     console.log(details , "details");
+//     const orderPromises = details.map(async (product) => {
+//       const response = await fetch(
+//         `https://dummyjson.com/products/${product.id}`
+//       );
+//       const prod = await response.json();
+
+//       return Order.findOneAndUpdate(
+//         { email },
+//         {
+//           $push: {
+//             order: {
+//               id: prod.id,
+//               orderDate: new Date(),
+//               status: "ordered",
+//               address,
+//             },
+//           },
+//         },
+//         { new: true, upsert: true }
+//       );
+//     });
+
+//     await Promise.all(orderPromises);
+
+//     const updatedOrders = await Promise.all(orderPromises);
+
+//     res
+//       .status(200)
+//       .json({ message: "Orders updated successfully", updatedOrders });
+//   } catch (error) {
+//     console.error("Error updating orders:", error);
+//     res.status(500).json({ message: "Failed to update orders", error });
+//   }
+// });
+
+app.get("/pastOrders", async (req, res) => {
   try {
     const token = req.cookies.authToken;
 
-    const decoded = jwt.verify(token, SECRET_KEY);
+    // Check if the token exists
+    if (!token) {
+      return res.status(403).json({ message: "No token provided" });
+    }
+
+    // Verify the token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, SECRET_KEY);
+    } catch (error) {
+      return res.status(401).json({ message: "Invalid or expired token" });
+    }
+
     const { email } = decoded;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    // Fetch orders from the database
+    const orders = await Order.find({ email });
+    console.log(orders);
+    if (!orders || orders.length === 0) {
+      return res.json({ message: "No orders placed", orders: null });
     }
-    const address = user.address;
 
-    const details = req.body; 
-    const orderPromises = details.map(async (product) => {
-      const response = await fetch(
-        `https://dummyjson.com/products/${product.id}`
-      );
-      const prod = await response.json();
-
-      return Order.findOneAndUpdate(
-        { email },
-        {
-          $push: {
-            order: {
-              id: prod.id,
-              orderDate: new Date(),
-              status: "pending",
-              address,
-            },
-          },
-        },
-        { new: true, upsert: true }
-      );
-    });
-
-    const updatedOrders = await Promise.all(orderPromises);
-
-    res
-      .status(200)
-      .json({ message: "Orders updated successfully", updatedOrders });
+    // Respond with the fetched orders
+    res.json({ message: "Items fetched successfully", orders : orders });
   } catch (error) {
-    console.error("Error updating orders:", error);
-    res.status(500).json({ message: "Failed to update orders", error });
+    console.error("Error fetching past orders:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
-app.get("/pastOrders", (req, res) => {
-  const token = req.cookies.authToken;
-  const decoded = jwt.verify(token, SECRET_KEY);
-  const { email } = decoded;
-  Order.findOne({ email: "lalithvedium456@gmail.com" }, "order").then(
-    (result) => {
-      const orders = result.order;
-      if (!orders) {
-        console.log(" no orders");
-        return res.json({ message: "no orders placed", orders: null });
-      }
-    }
-  );
-
-  res.json({ message: "items fetched successfully ", orders: orders });
-});
 
 app.get("/fetchcart", async (req, res) => {
   const token = req.cookies.authToken;
