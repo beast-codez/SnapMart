@@ -4,7 +4,7 @@ import Navbar from "../navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../sidebar/Sidebar";
 import axios from "axios";
-
+import handleBuy from "../Buy/HandleBuy";
 function Cart({
   sidebar,
   setSidebar,
@@ -13,19 +13,30 @@ function Cart({
   search,
   setSearch,
 }) {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState([]);
   const [floater, setFloater] = useState("");
   const [change, setChange] = useState([]);
   const [total, setTotal] = useState(0);
   const [buyItems, setBuyItems] = useState([]);
   const navigate = useNavigate();
+  const handlePayment = (total) => {
+    
+    const amount = total * 100;
+    const userDetails = {
+      name: "John Doe",
+      email: "johndoe@example.com",
+      phone: "9876543210",
+    };
+
+    handleBuy(amount, userDetails, buyItems);
+  };
   const handleRemove = async (id) => {
     try {
       const response = await axios.post(
         "http://localhost:5000/removeFromCart",
-        { id }, // Pass the product ID
-        { withCredentials: true } // Include credentials (cookies)
+        { id },
+        { withCredentials: true }
       );
 
       if (response.data.message === "error") {
@@ -33,7 +44,6 @@ function Cart({
         return;
       }
       setChange(response.data.cart);
-
       setFloater("Successfully removed item");
     } catch (error) {
       console.error("Error removing item:", error);
@@ -51,35 +61,28 @@ function Cart({
         });
 
         if (!response.data.cart || response.data.cart.length === 0) {
-          setCart(null);
-        } else {
-          try {
-            // Map over the cart items to create an array of promises
-            setBuyItems(response.data.cart);
-            const productPromises = response.data.cart.map((id) =>
-              fetch(`https://dummyjson.com/products/${id}`).then((res) => {
-                if (!res.ok) {
-                  throw new Error(`Failed to fetch product with ID: ${id}`);
-                }
-                return res.json();
-              })
-            );
-
-            // Wait for all promises to resolve
-            const products = await Promise.all(productPromises);
-
-            // Update the cart state with fetched product data
-            setCart(products);
-          } catch (error) {
-            console.error("Error fetching cart products:", error);
-          } finally {
-            // Optionally handle any post-fetching cleanup or state updates
-            setLoading(false);
-          }
+          setCart([]);
+          setBuyItems([]);
+          setLoading(false);
+          return;
         }
+
+        setBuyItems(response.data.cart);
+
+        const productPromises = response.data.cart.map((id) =>
+          fetch(`https://dummyjson.com/products/${id}`).then((res) => {
+            if (!res.ok) {
+              throw new Error(`Failed to fetch product with ID: ${id}`);
+            }
+            return res.json();
+          })
+        );
+
+        const products = await Promise.all(productPromises);
+        setCart(products);
       } catch (error) {
         console.error("Error fetching cart data:", error);
-        setCart(null);
+        setCart([]);
       } finally {
         setLoading(false);
       }
@@ -87,13 +90,15 @@ function Cart({
 
     fetchCart();
   }, [change]);
+
   useEffect(() => {
-    let k = 0;
-    cart.map((prod) => {
-      k += Math.floor(prod.price * 80);
+    let total = 0;
+    cart.forEach((prod) => {
+      total += Math.floor(prod.price * 80);
     });
-    setTotal(k);
+    setTotal(total);
   }, [cart]);
+
   if (loading) {
     return <div className="loader"></div>;
   }
@@ -158,10 +163,14 @@ function Cart({
             <div className="buy-cart">
               <p id="total-items">Total items: {cart.length}</p>
               <p id="total-cost"> Total Amount:{total} rs</p>
-              <button className="checkout-btn"
-               onClick={()=>{
-                navigate('/buy', {state : buyItems})
-               }}>Buy now</button>
+              <button
+                className="checkout-btn"
+                onClick={() => {
+                  handlePayment(total);
+                }}
+              >
+                Buy now
+              </button>
             </div>
           </div>
         </div>

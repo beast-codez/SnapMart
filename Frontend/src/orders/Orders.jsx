@@ -24,8 +24,8 @@ const Orders = ({
         const response = await axios.get("http://localhost:5000/pastOrders", {
           withCredentials: true,
         });
-
-        if (response.data.pastOrders === null || []) {
+        console.log(response.data.message);
+        if (response.data.orders === null || []) {
           setOrders([]);
           console.log("no orders");
           setLoading(false);

@@ -22,7 +22,12 @@ const Buy = ({
   const futureDate = new Date(currentDate);
   futureDate.setDate(futureDate.getDate() + 2);
   const handlePayment = (total) => {
-    const amount = total; 
+    // const resp = axios.post(
+    //   "http://localhost:5000/addOrder",
+    //   { buyItems },
+    //   { withCredentials: true }
+    // );
+    const amount = total*100; 
     const userDetails = {
       name: "John Doe",
       email: "johndoe@example.com",
@@ -39,19 +44,31 @@ const Buy = ({
     setTotal(k);
   }, [buyItems]);
 
-  useEffect(() => {
+
+useEffect(() => {
+  const fetchProducts = async () => {
     setLoading(true);
     const products = state || [];
-    products.map((prod) => {
-      fetch(`https://dummyjson.com/products/${prod}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setBuyItems([...buyItems, data]);
-        });
-    });
+    const fetchedItems = [];
+
+    for (const prod of products) {
+      try {
+        const response = await fetch(`https://dummyjson.com/products/${prod}`);
+        const data = await response.json();
+        fetchedItems.push(data);
+      } catch (error) {
+        console.error(`Error fetching product ${prod}:`, error);
+      }
+    }
+
+    setBuyItems([...buyItems, ...fetchedItems]);
+    console.log("buy items", [...buyItems, ...fetchedItems],Array.isArray(buyItems));
     setLoading(false);
-    const resp = axios.post('http://localhost:5000/addOrder',{ buyItems}, {withCredentials: true});
-  }, []);
+  };
+
+  fetchProducts();
+}, []);
+
   return (
     <div className="whole-cont">
       <Navbar

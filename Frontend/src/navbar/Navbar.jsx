@@ -3,10 +3,10 @@ import "./navbar.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-const Navbar = ({ setSidebar, setSearch ,setCategory}) => {
+const Navbar = ({ setSidebar, setSearch, setCategory }) => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const location = useState('');
+  const location = useState("");
   const handleLogout = async () => {
     try {
       const response = await axios.post("http://localhost:5000/logout", null, {
@@ -20,12 +20,12 @@ const Navbar = ({ setSidebar, setSearch ,setCategory}) => {
   };
 
   const handleSearch = (e) => {
-    if(e) e.preventDefault();
+    if (e) e.preventDefault();
     const formattedQuery = query.replace(/\s+/g, "");
     setSearch(formattedQuery.trim());
-    setQuery('');
-    setCategory('');
-    location.pathname !== '/home' && navigate('/home');
+    setQuery("");
+    setCategory("");
+    location.pathname !== "/home" && navigate("/home");
   };
 
   return (
@@ -57,7 +57,7 @@ const Navbar = ({ setSidebar, setSearch ,setCategory}) => {
       </div>
       <div className="nav-right">
         <img src="/img/notificationicon.png" alt="notification" />
-        <img src="/img/profileicon.png" alt="profile icon" />
+        <img id="profile-icon" src="/img/profileicon.png" alt="profile icon" />
         <img
           id="logout"
           src="/img/logout.png"

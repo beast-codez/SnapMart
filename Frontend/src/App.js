@@ -15,21 +15,49 @@ import Cart from "./Cart/Cart";
 import Orders from "./orders/Orders";
 import Contact from "./contact/Contact"
 import Buy from "./Buy/Buy";
+import axios from 'axios';
+import {jwtDecode} from "jwt-decode";
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebar, setSidebar] = useState(true);
   const [category, setCategory] = useState("");
   const [search, setSearch] = useState("");
-  useEffect(() => {
-    const token = Cookies.get("authToken");
-    if (token) {
+ const [isLoading, setIsLoading] = useState(true);
+
+
+useEffect(() => {
+  const getAuthTokenFromCookies = () => {
+    const cookies = document.cookie.split("; ");
+    const tokenCookie = cookies.find((cookie) =>
+      cookie.startsWith("authToken=")
+    );
+    return tokenCookie ? tokenCookie.split("=")[1] : null;
+  };
+  const token = getAuthTokenFromCookies();
+
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+
+      // Optional: Check if the token is expired
+      const isTokenExpired = decodedToken.exp * 1000 < Date.now();
+      if (isTokenExpired) {
+        console.log("Token expired");
+        setIsAuthenticated(false);
+        return;
+      }
+
+      console.log("Token is valid", decodedToken);
       setIsAuthenticated(true);
+    } catch (error) {
+      console.error("Invalid token:", error);
+      setIsAuthenticated(false);
     }
-  }, []);
-  useEffect(() => {
-    const token = Cookies.get("authToken");
-    setIsAuthenticated(!!token);
-  }, []);
+  } else {
+    console.log("No token found");
+    setIsAuthenticated(false);
+  }
+}, []);
 
   return (
     <Router>
