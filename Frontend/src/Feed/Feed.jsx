@@ -40,7 +40,7 @@ function Feed({ sidebar, category, search }) {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://snapmart-9loi.onrender.com/cart",
+        "https://snap-mart.netlify.app/cart",
         { id },
         { withCredentials: true }
       );

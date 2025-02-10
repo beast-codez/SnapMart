@@ -24,7 +24,7 @@ function Signup({ setIsAuthenticated }) {
 
     try {
       const response = await axios.post(
-        "https://snapmart-9loi.onrender.com/signup",
+        "https://snap-mart.netlify.app/signup",
         user,
         { withCredentials: true }
       );

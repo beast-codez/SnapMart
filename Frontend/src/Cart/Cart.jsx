@@ -33,7 +33,7 @@ function Cart({
   const handleRemove = async (id) => {
     try {
       const response = await axios.post(
-        "https://snapmart-9loi.onrender.com/removeFromCart",
+        "https://snap-mart.netlify.app/removeFromCart",
         { id },
         { withCredentials: true }
       );
@@ -56,7 +56,7 @@ function Cart({
 
       try {
         const response = await axios.get(
-          "https://snapmart-9loi.onrender.com/fetchcart",
+          "https://snap-mart.netlify.app/fetchcart",
           {
             withCredentials: true,
           }
