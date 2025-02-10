@@ -20,7 +20,7 @@ const url = process.env.url;
 
 app.use(
   cors({
-    origin: "https://snap-mart.netlify.app/",
+    origin: "https://snap-mart.netlify.app",
     methods: "GET,POST",
     credentials: true,
   })
