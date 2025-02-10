@@ -14,16 +14,19 @@ const Orders = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState([]);
-  const navigate =  useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
 
         // Fetch past orders
-        const response = await axios.get("http://localhost:5000/pastOrders", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "https://snapmart-9loi.onrender.com/pastOrders",
+          {
+            withCredentials: true,
+          }
+        );
         console.log(response.data.message);
         if (response.data.orders === null || []) {
           setOrders([]);
@@ -66,7 +69,9 @@ const Orders = ({
     return (
       <div className="no-orders">
         <p id="orders-info">No orders yet</p>
-        <button className="order-btn" onClick={()=>navigate('/home')}>Order now</button>
+        <button className="order-btn" onClick={() => navigate("/home")}>
+          Order now
+        </button>
       </div>
     );
   }

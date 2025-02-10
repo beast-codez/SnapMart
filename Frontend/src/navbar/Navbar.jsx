@@ -9,9 +9,13 @@ const Navbar = ({ setSidebar, setSearch, setCategory }) => {
   const location = useState("");
   const handleLogout = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/logout", null, {
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        "https://snapmart-9loi.onrender.com/logout",
+        null,
+        {
+          withCredentials: true,
+        }
+      );
       navigate("/login");
       window.location.reload();
     } catch (error) {

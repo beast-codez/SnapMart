@@ -9,7 +9,6 @@ function Feed({ sidebar, category, search }) {
   const [error, setError] = useState("");
   const [float, setFloat] = useState("");
 
-  
   const navigate = useNavigate();
   const fetchProducts = async () => {
     setLoading(true);
@@ -41,7 +40,7 @@ function Feed({ sidebar, category, search }) {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/cart",
+        "https://snapmart-9loi.onrender.com/cart",
         { id },
         { withCredentials: true }
       );

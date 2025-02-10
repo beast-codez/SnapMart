@@ -21,7 +21,6 @@ function Cart({
   const [buyItems, setBuyItems] = useState([]);
   const navigate = useNavigate();
   const handlePayment = (total) => {
-    
     const amount = total * 100;
     const userDetails = {
       name: "John Doe",
@@ -34,7 +33,7 @@ function Cart({
   const handleRemove = async (id) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/removeFromCart",
+        "https://snapmart-9loi.onrender.com/removeFromCart",
         { id },
         { withCredentials: true }
       );
@@ -56,9 +55,12 @@ function Cart({
       setLoading(true);
 
       try {
-        const response = await axios.get("http://localhost:5000/fetchcart", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "https://snapmart-9loi.onrender.com/fetchcart",
+          {
+            withCredentials: true,
+          }
+        );
 
         if (!response.data.cart || response.data.cart.length === 0) {
           setCart([]);

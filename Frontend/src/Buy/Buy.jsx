@@ -23,11 +23,11 @@ const Buy = ({
   futureDate.setDate(futureDate.getDate() + 2);
   const handlePayment = (total) => {
     // const resp = axios.post(
-    //   "http://localhost:5000/addOrder",
+    //   "https://snapmart-9loi.onrender.com/addOrder",
     //   { buyItems },
     //   { withCredentials: true }
     // );
-    const amount = total*100; 
+    const amount = total * 100;
     const userDetails = {
       name: "John Doe",
       email: "johndoe@example.com",
@@ -44,30 +44,35 @@ const Buy = ({
     setTotal(k);
   }, [buyItems]);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      const products = state || [];
+      const fetchedItems = [];
 
-useEffect(() => {
-  const fetchProducts = async () => {
-    setLoading(true);
-    const products = state || [];
-    const fetchedItems = [];
-
-    for (const prod of products) {
-      try {
-        const response = await fetch(`https://dummyjson.com/products/${prod}`);
-        const data = await response.json();
-        fetchedItems.push(data);
-      } catch (error) {
-        console.error(`Error fetching product ${prod}:`, error);
+      for (const prod of products) {
+        try {
+          const response = await fetch(
+            `https://dummyjson.com/products/${prod}`
+          );
+          const data = await response.json();
+          fetchedItems.push(data);
+        } catch (error) {
+          console.error(`Error fetching product ${prod}:`, error);
+        }
       }
-    }
 
-    setBuyItems([...buyItems, ...fetchedItems]);
-    console.log("buy items", [...buyItems, ...fetchedItems],Array.isArray(buyItems));
-    setLoading(false);
-  };
+      setBuyItems([...buyItems, ...fetchedItems]);
+      console.log(
+        "buy items",
+        [...buyItems, ...fetchedItems],
+        Array.isArray(buyItems)
+      );
+      setLoading(false);
+    };
 
-  fetchProducts();
-}, []);
+    fetchProducts();
+  }, []);
 
   return (
     <div className="whole-cont">
@@ -113,7 +118,12 @@ useEffect(() => {
               <p id="total-items">Total items: {buyItems.length}</p>
               <p id="total-cost"> Total Amount:{total} rs</p>
               <p id="deliver-date">{futureDate.toDateString()}</p>
-              <button className="checkout-btn" onClick={()=>handlePayment(total)}>Buy now</button>
+              <button
+                className="checkout-btn"
+                onClick={() => handlePayment(total)}
+              >
+                Buy now
+              </button>
             </div>
           </div>
         )}

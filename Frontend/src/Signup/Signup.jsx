@@ -23,7 +23,11 @@ function Signup({ setIsAuthenticated }) {
     console.log("User data being sent:", user); // Log the data
 
     try {
-      const response = await axios.post("http://localhost:5000/signup", user,{withCredentials : true});
+      const response = await axios.post(
+        "https://snapmart-9loi.onrender.com/signup",
+        user,
+        { withCredentials: true }
+      );
       console.log("Signup response:", response.data);
 
       if (response.data.message === "Signup successful") {
@@ -31,12 +35,12 @@ function Signup({ setIsAuthenticated }) {
         navigate("/home");
       } else {
         setMessage(response.data.message);
-        setTimeout(()=>{
-          setMessage('');
-        }, 3000)
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
       }
     } catch (err) {
-      setMessage("An internal error occured! Try again later..")
+      setMessage("An internal error occured! Try again later..");
     }
   };
 
