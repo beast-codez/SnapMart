@@ -16,8 +16,7 @@ const app = express();
 const PORT = process.env.port || 5000;
 const SECRET_KEY = process.env.SECRET_KEY;
 app.use(bodyParser.json());
-const url =
-  process.env.url;
+const url = process.env.url;
 
 app.use(
   cors({
@@ -36,8 +35,8 @@ mongoose
   .catch((err) => console.error("Failed to connect to MongoDB", err));
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID ,
-  key_secret: process.env.RAZORPAY_SECRET ,
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_SECRET,
 });
 
 app.get("/", (req, res) => {
@@ -315,13 +314,12 @@ app.get("/pastOrders", async (req, res) => {
     }
 
     // Respond with the fetched orders
-    res.json({ message: "Items fetched successfully", orders : orders });
+    res.json({ message: "Items fetched successfully", orders: orders });
   } catch (error) {
     console.error("Error fetching past orders:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 app.get("/fetchcart", async (req, res) => {
   const token = req.cookies.authToken;

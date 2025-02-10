@@ -10,7 +10,7 @@ const Navbar = ({ setSidebar, setSearch, setCategory }) => {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "https://snap-mart.netlify.app/logout",
+        "https://snapmart-9loi.onrender.com/logout",
         null,
         {
           withCredentials: true,

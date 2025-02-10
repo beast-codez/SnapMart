@@ -22,7 +22,7 @@ const Orders = ({
 
         // Fetch past orders
         const response = await axios.get(
-          "https://snap-mart.netlify.app/pastOrders",
+          "https://snapmart-9loi.onrender.com/pastOrders",
           {
             withCredentials: true,
           }

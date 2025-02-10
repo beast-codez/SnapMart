@@ -14,7 +14,7 @@ const Login = ({ setIsAuthenticated }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://snap-mart.netlify.app/login",
+        "https://snapmart-9loi.onrender.com/login",
         {
           email,
           password,
