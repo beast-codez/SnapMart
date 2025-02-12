@@ -23,9 +23,13 @@ function Signup({ setIsAuthenticated }) {
     console.log("User data being sent:", user); // Log the data
 
     try {
-      const response = await axios.post("http://localhost:5000/signup", user, {
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        "https://snapmart-9loi.onrender.com/signup",
+        user,
+        {
+          withCredentials: true,
+        }
+      );
       console.log("Signup response:", response.data);
 
       if (response.data.message === "Signup successful") {

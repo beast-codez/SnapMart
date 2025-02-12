@@ -40,7 +40,7 @@ function Feed({ sidebar, category, search }) {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/cart",
+        "https://snapmart-9loi.onrender.com/cart",
         { id },
         { withCredentials: true }
       );
@@ -82,10 +82,8 @@ function Feed({ sidebar, category, search }) {
         <div></div>
         <div></div>
         <div></div>
-        
       </div>
     );
-
   }
 
   if (!loading && products.length === 0) {

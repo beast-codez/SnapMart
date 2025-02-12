@@ -14,10 +14,13 @@ const Login = ({ setIsAuthenticated }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://snapmart-9loi.onrender.com/login",
+        {
+          email,
+          password,
+        }
+      );
 
       if (response.data.token) {
         localStorage.setItem("authToken", response.data.token); // Store token in localStorage
@@ -34,7 +37,6 @@ const Login = ({ setIsAuthenticated }) => {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="outer-container">

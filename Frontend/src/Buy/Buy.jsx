@@ -23,7 +23,7 @@ const Buy = ({
   futureDate.setDate(futureDate.getDate() + 2);
   const handlePayment = (total) => {
     // const resp = axios.post(
-    //   "http://localhost:5000/addOrder",
+    //   "https://snapmart-9loi.onrender.com/addOrder",
     //   { buyItems },
     //   { withCredentials: true }
     // );

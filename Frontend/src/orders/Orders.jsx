@@ -21,9 +21,12 @@ const Orders = ({
         setLoading(true);
 
         // Fetch past orders
-        const response = await axios.get("http://localhost:5000/pastOrders", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "https://snapmart-9loi.onrender.com/pastOrders",
+          {
+            withCredentials: true,
+          }
+        );
         console.log(response.data.message);
         if (response.data.orders === null || []) {
           setOrders([]);

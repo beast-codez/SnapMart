@@ -21,7 +21,7 @@ const url = process.env.url;
 app.use(
   cors({
     // origin: "https://snap-mart.netlify.app",
-    origin: "http://localhost:3000",
+    origin: "https://snap-mart.netlify.app",
     methods: "GET,POST",
     credentials: true,
   })
@@ -69,7 +69,6 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 app.get("/home", (req, res) => {
   const token = req.cookies.authToken;
@@ -139,7 +138,7 @@ app.get("/token", (req, res) => {
 });
 
 app.post("/cart", async (req, res) => {
-  console.log("Request received at /cart"); 
+  console.log("Request received at /cart");
   const { id } = req.body;
   const token = req.cookies.authToken;
 
