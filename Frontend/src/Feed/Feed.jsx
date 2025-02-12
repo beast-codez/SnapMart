@@ -40,12 +40,17 @@ function Feed({ sidebar, category, search }) {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://snapmart-9loi.onrender.com/cart",
+        "http://localhost:5000/cart",
         { id },
         { withCredentials: true }
       );
       setFloat(response.data.message);
-      setTimeout(() => {
+      // Clear any existing timeout
+      if (window.floatTimeout) {
+        clearTimeout(window.floatTimeout);
+      }
+      // Set new timeout
+      window.floatTimeout = setTimeout(() => {
         setFloat("");
       }, 3000);
     } catch (err) {
@@ -55,6 +60,7 @@ function Feed({ sidebar, category, search }) {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchProducts();
   }, [category, search]);
@@ -71,11 +77,25 @@ function Feed({ sidebar, category, search }) {
   }
 
   if (loading) {
-    return <div className="loader"></div>;
+    return (
+      <div className="cloader">
+        <div></div>
+        <div></div>
+        <div></div>
+        
+      </div>
+    );
+
   }
 
   if (!loading && products.length === 0) {
-    return <p className="error-cont">No products available...</p>;
+    return (
+      <>
+        <div id="no-products">
+          <p className="error-cont">No products available...</p>
+        </div>
+      </>
+    );
   }
   const handleproduct = (id) => {
     navigate(`/product/:${id}`);

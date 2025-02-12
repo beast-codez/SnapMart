@@ -7,21 +7,14 @@ const Navbar = ({ setSidebar, setSearch, setCategory }) => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const location = useState("");
-  const handleLogout = async () => {
-    try {
-      const response = await axios.post(
-        "https://snapmart-9loi.onrender.com/logout",
-        null,
-        {
-          withCredentials: true,
-        }
-      );
-      navigate("/login");
-      window.location.reload();
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
-  };
+ const handleLogout = () => {
+   localStorage.removeItem("authToken");
+
+   navigate("/login");
+
+   window.location.reload();
+ };
+
 
   const handleSearch = (e) => {
     if (e) e.preventDefault();

@@ -30,8 +30,8 @@
   padding: 24px;
   background-color: #f8f9fa;
   transition: all 0.3s ease;
-  overflow-y: auto; /* Changed from hidden to auto to enable scrolling */
-  height: calc(100vh - 56px); /* Set height to viewport height minus navbar */
+  overflow-y: auto; 
+  height: calc(100vh - 56px);
 }
 
 .contact-us-container {
@@ -42,7 +42,6 @@
   color: #1a1a1a;
 }
 
-/* Rest of your styling */
 .contact-us-title {
   font-size: 3rem;
   background: linear-gradient(45deg, #007bff, #00bcd4);
@@ -70,8 +69,8 @@
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
   padding: 20px;
-  height: auto; /* Allow content to determine height */
-  overflow: visible; /* Allow content to be visible */
+  height: auto; 
+  overflow: visible; 
 }
 
 .contact-item {
@@ -134,7 +133,6 @@
   transform-origin: left;
 }
 
-/* Responsive adjustments */
 .contact-details.with-sidebar {
   margin-left: 220px;
 }
@@ -143,7 +141,6 @@
   margin-left: 56px;
 }
 
-/* Animation keyframes */
 @keyframes slideUp {
   from {
     transform: translateY(20px);
@@ -155,7 +152,6 @@
   }
 }
 
-/* Media queries */
 @media (max-width: 768px) {
   .contact-us-title {
     font-size: 2.5rem;
@@ -175,8 +171,119 @@
     font-size: 2rem;
   }
   
+  .contact-us-container{
+    position: relative;
+    margin: auto;
+    align-self: center;
+    justify-self: center;
+  }
   .contact-details {
     gap: 20px;
     padding: 10px;
   }
+  .sidebar-hidden{
+    display: none;
+  }
+}
+@media screen and (max-width: 768px) {
+  .contact-cont {
+    margin-top: 56px;
+    flex-direction: column;
+  }
+
+  .contact-details {
+    margin-left: 0 !important; /* Override both with-sidebar and full-width margins */
+    padding: 16px;
+    width: 100%;
+  }
+
+  .contact-us-container {
+    padding: 20px 12px;
+  }
+
+  .contact-us-title {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .contact-us-subtitle {
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .contact-details .contact-details {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 16px;
+    padding: 0;
+  }
+
+  .contact-item {
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .contact-item h2 {
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+  }
+
+  .contact-item p {
+    font-size: 1rem;
+    margin: 8px 0;
+  }
+
+  /* Handle sidebar on mobile */
+  .sidebar-visible,
+  .sidebar-hidden {
+    position: fixed;
+    top: 56px;
+    height: calc(100vh - 56px);
+    z-index: 1000;
+  }
+
+  .sidebar-hidden {
+    width: 0;
+    overflow: hidden;
+  }
+
+  .sidebar-visible {
+    width: 200px;
+  }
+  .contact-us-container{
+    margin-left: 56px;
+  }
+  /* Adjust container when sidebar is visible */
+  .contact-details.with-sidebar {
+    margin-left: 0;
+    opacity: 0.7; /* Dim the main content when sidebar is open */
+  }
+
+  .contact-details.full-width {
+    margin-left: 56px;
+    opacity: 1;
+  }
+}
+
+/* Additional styles for even smaller screens */
+@media screen and (max-width: 480px) {
+  .contact-us-title {
+    font-size: 1.75rem;
+  }
+
+  .contact-item {
+    padding: 16px;
+  }
+
+  .contact-details {
+    padding: 8px;
+    margin-left: 56px;
+  }
+}
+
+/* Fix potential overflow issues */
+.whole-cont {
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }

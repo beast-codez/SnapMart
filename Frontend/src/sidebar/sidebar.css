@@ -1,53 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-.Sidebar{
-    width: 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    background-color: aliceblue;
-    top:51px;
-    height: 100vh;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+.Sidebar {
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: rgb(128, 194, 252);
+  top: 51px;
+  height: 100vh;
 }
-.side-links{
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 15px;
-    border-radius: 10px;
+.side-links {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
 }
-.side-links img{
-    width: 26px;
-    margin-right: 13px;
+.side-links img {
+  width: 26px;
+  margin-right: 13px;
 }
-.side-links p{
-    font-size: 16px;
-    font-family: "Poppins", serif;
+.side-links p {
+  font-size: 16px;
+  font-family: "Poppins", serif;
 }
 
-#categories{
-    
-    font-size: large;
-    margin-top: 12px;
-    
+#categories {
+  font-size: large;
+  margin-top: 12px;
 }
-.hr{
-    margin-top: -15px;
-    color: grey;
+.hr {
+  margin-top: -15px;
+  color: grey;
 }
-.hidesidebar{
-    width: 56px;
-    
+.hidesidebar {
+  width: 56px;
 }
-.hidden{
-    display: none;
+.hidden {
+  display: none;
 }
-.hiddenhr{
-    margin-top:-10px;
+.hiddenhr {
+  margin-top: -10px;
 }
-.side-links:hover{
-    background-color: rgb(213, 213, 213);
-    cursor: pointer;
+.side-links:hover {
+  background-color: rgb(213, 213, 213);
+  cursor: pointer;
 }
 
 .Sidebar {
@@ -68,6 +65,11 @@
   padding: 15px;
   border-radius: 10px;
 }
-.highlight{
-    background-color: rgb(183, 182, 182);
+.highlight {
+  background-color: rgb(183, 182, 182);
+}
+@media screen and (max-width: 480px){
+  .hidesidebar{
+    display: none;
+  }
 }

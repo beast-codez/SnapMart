@@ -33,7 +33,7 @@ function Cart({
   const handleRemove = async (id) => {
     try {
       const response = await axios.post(
-        "https://snapmart-9loi.onrender.com/removeFromCart",
+        "http://localhost:5000/removeFromCart",
         { id },
         { withCredentials: true }
       );
@@ -55,12 +55,9 @@ function Cart({
       setLoading(true);
 
       try {
-        const response = await axios.get(
-          "https://snapmart-9loi.onrender.com/fetchcart",
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get("http://localhost:5000/fetchcart", {
+          withCredentials: true,
+        });
 
         if (!response.data.cart || response.data.cart.length === 0) {
           setCart([]);
@@ -102,19 +99,10 @@ function Cart({
   }, [cart]);
 
   if (loading) {
-    return <div className="loader"></div>;
+    return ;
   }
 
-  if (!cart || cart.length === 0) {
-    return (
-      <div className="empty-cart">
-        <p>Your cart is empty. Start shopping now!</p>
-        <button className="shop-now-btn" onClick={() => navigate("/home")}>
-          Shop Now
-        </button>
-      </div>
-    );
-  }
+  
 
   return (
     <>
@@ -133,48 +121,64 @@ function Cart({
               setSearch={setSearch}
             />
           </div>
-          <div
-            className={`cart-details ${
-              sidebar ? "with-sidebar" : "full-width"
-            }`}
-          >
-            <p id="cart-title">Your cart</p>
-            <div className="cart-items-cont">
-              {cart.map((product) => (
-                <div className="cart-item" key={product.id}>
-                  <img
-                    src={product.images[0] || "/img/defaultimg.png"}
-                    alt={product.title}
-                    className="cart-item-image"
-                  />
-                  <div className="cart-item-info">
-                    <h3>{product.title}</h3>
-                    <p>Price: Rs.{Math.floor(product.price * 80)}</p>
-                    <p>Stock: {product.stock}</p>
-                    <button
-                      className="remove-btn"
-                      onClick={() => handleRemove(product.id)}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              ))}
+          {loading ? (
+            <div className="cloader">
+              <div></div>
+              <div></div>
+              <div></div>
             </div>
-
-            <div className="buy-cart">
-              <p id="total-items">Total items: {cart.length}</p>
-              <p id="total-cost"> Total Amount:{total} rs</p>
+          ) : !cart || cart.length === 0 ? (
+            <div className="empty-cart">
+              <p>Your cart is empty. Start shopping now!</p>
               <button
-                className="checkout-btn"
-                onClick={() => {
-                  handlePayment(total);
-                }}
+                className="shop-now-btn"
+                onClick={() => navigate("/home")}
               >
-                Buy now
+                Shop Now
               </button>
             </div>
-          </div>
+          ) : (
+            <div
+              className={`cart-details ${
+                sidebar ? "with-sidebar" : "full-width"
+              }`}
+            >
+              <p id="cart-title">Your cart</p>
+              <div className="cart-items-cont">
+                {cart.map((product) => (
+                  <div className="cart-item" key={product.id}>
+                    <img
+                      src={product.images[0] || "/img/defaultimg.png"}
+                      alt={product.title}
+                      className="cart-item-image"
+                    />
+                    <div className="cart-item-info">
+                      <h3>{product.title}</h3>
+                      <p>Price: Rs.{Math.floor(product.price * 80)}</p>
+                      <p>Stock: {product.stock}</p>
+                      <button
+                        className="remove-btn"
+                        onClick={() => handleRemove(product.id)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="buy-cart">
+                <p id="total-items">Total items: {cart.length}</p>
+                <p id="total-cost"> Total Amount: {total} rs</p>
+                <button
+                  className="checkout-btn"
+                  onClick={() => handlePayment(total)}
+                >
+                  Buy now
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

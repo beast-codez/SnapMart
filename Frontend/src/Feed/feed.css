@@ -121,27 +121,56 @@ body {
   background-color: red;
   color: white;
 }
-.loader {
-  width: 45px;
-  height: 45px;
-  align-self: center;
-  justify-self: center;
+.cloader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
   position: relative;
   margin: auto;
-  border-radius: 50%;
-  border: 5px solid transparent; 
-  border-top-color: rgb(25, 0, 255); 
-  animation: rotate 3s linear infinite; 
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.cloader div {
+  width: 12px;
+  height: 12px;
+  background-color: #007bff;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite ease-in-out;
 }
+
+.cloader div:nth-child(1) { animation-delay: 0s; }
+.cloader div:nth-child(2) { animation-delay: 0.2s; }
+.cloader div:nth-child(3) { animation-delay: 0.4s; }
+
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.5); opacity: 1; }
+}
+#no-products{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  justify-self: center;
+  flex-direction: column;
+  position: relative
+  ;
+  margin: auto;
+
+}
+#home{
+  background-color: orange;
+  transition: all 0.2s ease-in;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+#home:hover{
+  color: white;
+  box-shadow: 2px 3px 3px 3px rgb(168, 168, 168);
+}
+
+
+
 .floater{
   background-color: #ffc65c;
   font-size: 15px;
@@ -155,7 +184,17 @@ body {
   left: 41%;
   z-index: 1000;
   transition: all 0.2s ease;
+   
 }
-.hidden{
-  display: none;
+@media screen and (max-width : 480px){
+  .product{
+    /* align-self: center;
+    justify-content: center;
+    position: relative;
+    margin: auto; */
+    width: 100%;
+    margin-bottom: 15px;
+    height: 374px;
+  }
+  
 }

@@ -20,7 +20,8 @@ const url = process.env.url;
 
 app.use(
   cors({
-    origin: "https://snap-mart.netlify.app",
+    // origin: "https://snap-mart.netlify.app",
+    origin: "http://localhost:3000",
     methods: "GET,POST",
     credentials: true,
   })
@@ -50,30 +51,25 @@ app.post("/login", async (req, res) => {
     if (!user) {
       return res.json({ message: "No user registered with this email" });
     }
-    if (user.password !== password) {
-      return res.json({ message: "wrong passsword" });
-    }
-    const token = jwt.sign(
-      {
-        email: email, //user.email
-      },
-      SECRET_KEY,
-      {
-        expiresIn: "1d",
-      }
-    );
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    });
 
-    res.json({ message: "Login successful" });
+    if (user.password !== password) {
+      return res.json({ message: "Wrong password" });
+    }
+
+    // Generate JWT Token
+    const token = jwt.sign(
+      { email: email }, // Payload
+      SECRET_KEY,
+      { expiresIn: "1d" }
+    );
+
+    // ✅ No cookies, send token in response
+    res.json({ message: "Login successful", token });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 app.get("/home", (req, res) => {
   const token = req.cookies.authToken;
@@ -96,6 +92,7 @@ app.get("/home", (req, res) => {
     });
   }
 });
+
 app.post("/signup", async (req, res) => {
   const { email, username, address, password } = req.body;
 
@@ -104,21 +101,23 @@ app.post("/signup", async (req, res) => {
   }
 
   try {
+    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
+    // Create a new user
     const newUser = await User.create({ email, username, address, password });
     console.log("New user added:", newUser);
 
+    // Generate JWT token
     const token = jwt.sign({ email: newUser.email }, SECRET_KEY, {
       expiresIn: "1d",
     });
 
-    res.cookie("authToken", token, { httpOnly: true, maxAge: 86400000 });
-    res.json({ message: "Signup successful" });
-  } catch (err) {
+    res.json({ message: "Signup successful", token });
+  } catch (error) {
     res.status(500).json({ message: "Internal server error" });
     console.log(error);
   }
@@ -140,7 +139,7 @@ app.get("/token", (req, res) => {
 });
 
 app.post("/cart", async (req, res) => {
-  console.log("Request received at /cart"); // Debug log
+  console.log("Request received at /cart"); 
   const { id } = req.body;
   const token = req.cookies.authToken;
 

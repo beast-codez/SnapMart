@@ -3,6 +3,7 @@ import "./Product.css";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Product({
   sidebar,
@@ -20,7 +21,7 @@ function Product({
   const [close, setClose] = useState(false);
   const navigate = useNavigate();
   const isFirstRender = useRef(true);
-
+  const [float, setFloat] = useState("");
   const handleClose = () => {
     setClose(!close);
   };
@@ -38,8 +39,6 @@ function Product({
     }
   }, [category, navigate, product?.category]);
 
-
-
   useEffect(() => {
     const closeSignElement = document.getElementById("close-sign");
     if (closeSignElement) {
@@ -52,8 +51,6 @@ function Product({
     setError("");
 
     try {
-      
-
       const res = await fetch(`https://dummyjson.com/products/${id}`);
       if (!res.ok) {
         throw new Error("Failed to fetch product data.");
@@ -70,7 +67,28 @@ function Product({
   useEffect(() => {
     fetchProducts();
   }, [id]);
-
+  const handleBuy = async (id) => {
+    navigate("/buy", { state: [id] });
+  };
+  const handlecart = async (id) => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/cart",
+        { id },
+        { withCredentials: true }
+      );
+      setFloat(response.data.message);
+      setTimeout(() => {
+        setFloat("");
+      }, 3000);
+    } catch (err) {
+      setError("Error adding product to the cart");
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     if (!product || !category) setLoading(true);
   }, [product, category]);
@@ -156,8 +174,18 @@ function Product({
             <p id="prod_rating">Rating: {product.rating} ⭐</p>
 
             <div className="product-actions">
-              <button className="prod_btn">Add to Cart</button>
-              <button className="prod_btn">Buy Now</button>
+              <button
+                className="prod_btn"
+                onClick={() => handlecart(product.id)}
+              >
+                Add to Cart
+              </button>
+              <button
+                className="prod_btn"
+                onClick={() => handleBuy(product.id)}
+              >
+                Buy Now
+              </button>
             </div>
             {/* Product reviews */}
             <div className="reviews">

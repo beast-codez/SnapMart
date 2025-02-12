@@ -20,7 +20,7 @@ const handleBuy = async (amount, userDetails, buyItems) => {
 
     // Send amount and user details to the backend to create an order
     const { data } = await axios.post(
-      "https://snapmart-9loi.onrender.com/api/payment/order",
+      "http://localhost:5000/api/payment/order",
       { amount },
       { withCredentials: true }
     );
@@ -45,7 +45,7 @@ const handleBuy = async (amount, userDetails, buyItems) => {
         try {
           // Handle successful payment
           const verifyResponse = await axios.post(
-            "https://snapmart-9loi.onrender.com/api/payment/verify",
+            "http://localhost:5000/api/payment/verify",
             {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
@@ -56,7 +56,7 @@ const handleBuy = async (amount, userDetails, buyItems) => {
 
           if (verifyResponse.data.success) {
             await axios.post(
-              "https://snapmart-9loi.onrender.com/addOrder",
+              "http://localhost:5000/addOrder",
               { buyItems },
               { withCredentials: true }
             );

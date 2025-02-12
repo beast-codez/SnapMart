@@ -21,12 +21,9 @@ const Orders = ({
         setLoading(true);
 
         // Fetch past orders
-        const response = await axios.get(
-          "https://snapmart-9loi.onrender.com/pastOrders",
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get("http://localhost:5000/pastOrders", {
+          withCredentials: true,
+        });
         console.log(response.data.message);
         if (response.data.orders === null || []) {
           setOrders([]);
@@ -62,16 +59,11 @@ const Orders = ({
   }, []);
 
   if (loading) {
-    return <div className="loader"></div>;
-  }
-
-  if (orders.length === 0) {
     return (
-      <div className="no-orders">
-        <p id="orders-info">No orders yet</p>
-        <button className="order-btn" onClick={() => navigate("/home")}>
-          Order now
-        </button>
+      <div className="cloader">
+        <div></div>
+        <div></div>
+        <div></div>
       </div>
     );
   }
@@ -92,26 +84,37 @@ const Orders = ({
             setSearch={setSearch}
           />
         </div>
-        <div
-          className={`order-details ${sidebar ? "with-sidebar" : "full-width"}`}
-        >
-          <p id="heading">Your orders</p>
-          {orders.map((order) => (
-            <div className="order-products" key={order.id}>
-              <img
-                src={order.images[0]}
-                alt={order.title}
-                className="order-image"
-              />
-              <div className="order-info">
-                <p id="title">{order.title}</p>
-                <p id="date">Order Date: {order.orderDate}</p>
-                <p id="status">Status: {order.status}</p>
-                <p id="address">Address: {order.address}</p>
+        {orders.length === 0 || !orders ? (
+          <div className="no-orders">
+            <p id="orders-info">No orders yet</p>
+            <button className="order-btn" onClick={() => navigate("/home")}>
+              Order now
+            </button>
+          </div>
+        ) : (
+          <div
+            className={`order-details ${
+              sidebar ? "with-sidebar" : "full-width"
+            }`}
+          >
+            <p id="heading">Your orders</p>
+            {orders.map((order) => (
+              <div className="order-products" key={order.id}>
+                <img
+                  src={order.images[0]}
+                  alt={order.title}
+                  className="order-image"
+                />
+                <div className="order-info">
+                  <p id="title">{order.title}</p>
+                  <p id="date">Order Date: {order.orderDate}</p>
+                  <p id="status">Status: {order.status}</p>
+                  <p id="address">Address: {order.address}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

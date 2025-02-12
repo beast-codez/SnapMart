@@ -12,30 +12,29 @@ const Login = ({ setIsAuthenticated }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      const response = await axios.post(
-        "https://snapmart-9loi.onrender.com/login",
-        {
-          email,
-          password,
-        },
-        { withCredentials: true }
-      );
-      if (response.data.message === "Login successful") {
-        Cookies.set("authToken", response.data.token, { expires: 1 });
+      const response = await axios.post("http://localhost:5000/login", {
+        email,
+        password,
+      });
+
+      if (response.data.token) {
+        localStorage.setItem("authToken", response.data.token); // Store token in localStorage
         setIsAuthenticated(true);
       } else {
         setMessage(response.data.message);
-        setTimeout(() => {
-          setMessage("");
-        }, 3000);
+        setTimeout(() => setMessage(""), 3000);
       }
     } catch (error) {
       console.error("Login failed", error);
+      setMessage("Login failed. Please try again.");
+      setTimeout(() => setMessage(""), 3000);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="outer-container">

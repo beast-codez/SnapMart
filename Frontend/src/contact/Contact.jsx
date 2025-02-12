@@ -41,7 +41,11 @@ function Cart({
                 below.
               </p>
 
-              <div className="contact-details">
+              <div
+                className={`contact-details ${
+                  sidebar ? "with-sidebar" : "full-width"
+                } ${window.innerWidth <= 768 ? "mobile" : ""}`}
+              >
                 {/* Contact Email */}
                 <div className="contact-item">
                   <h2>Email Us</h2>

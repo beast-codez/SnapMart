@@ -8,25 +8,42 @@ html {
   color: blue;
   align-self: center;
 }
-.loader {
-  width: 45px;
-  height: 45px;
-  align-self: center;
-  justify-self: center;
+.cloader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
   position: relative;
   margin: auto;
-  border-radius: 50%;
-  border: 5px solid transparent;
-  border-top-color: rgb(25, 0, 255);
-  animation: rotate 3s linear infinite;
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
+.cloader div {
+  width: 12px;
+  height: 12px;
+  background-color: #007bff;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.cloader div:nth-child(1) {
+  animation-delay: 0s;
+}
+.cloader div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.cloader div:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
   }
 }
 .order-cont {
@@ -78,6 +95,8 @@ html {
 .no-orders {
   align-self: center;
   justify-self: center;
+  position: relative;
+  margin: auto;
 }
 #orders-info {
   margin: auto;

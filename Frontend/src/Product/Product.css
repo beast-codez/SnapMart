@@ -52,7 +52,7 @@
 }
 
 .product-details.full-width {
-  margin-left: 80px;
+  margin-left: 56px;
 }
 
 .suggestions {
@@ -201,6 +201,7 @@
   margin-bottom: 10px;
   align-items: flex-start;
   z-index: 1000;
+  cursor: pointer;
 }
 
 .image-container {
