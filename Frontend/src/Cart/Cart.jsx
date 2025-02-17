@@ -32,16 +32,26 @@ function Cart({
   };
   const handleRemove = async (id) => {
     try {
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        setFloater("Authorization token is missing");
+        return;
+      }
+
       const response = await axios.post(
         "https://snapmart-9loi.onrender.com/removeFromCart",
         { id },
-        { withCredentials: true }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
       if (response.data.message === "error") {
         setFloater("Error occurred, try again later");
         return;
       }
+
       setChange(response.data.cart);
       setFloater("Successfully removed item");
     } catch (error) {
@@ -55,10 +65,21 @@ function Cart({
       setLoading(true);
 
       try {
+        const token = localStorage.getItem("authToken"); // Get token from localStorage
+
+        if (!token) {
+          console.error("No auth token found, please log in");
+          setLoading(false);
+          return;
+        }
+
         const response = await axios.get(
           "https://snapmart-9loi.onrender.com/fetchcart",
           {
-            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${token}`, // Sending token in headers
+              "Content-Type": "application/json",
+            },
           }
         );
 

@@ -38,24 +38,39 @@ function Feed({ sidebar, category, search }) {
   };
   const handlecart = async (id) => {
     setLoading(true);
+
     try {
+      const token = localStorage.getItem("authToken"); // Get token from localStorage
+
+      console.log("Token from localStorage:", token); // Debugging
+
+      if (!token) {
+        console.error("No auth token found, please log in");
+        setLoading(false);
+        return;
+      }
+
       const response = await axios.post(
         "https://snapmart-9loi.onrender.com/cart",
         { id },
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Sending token here
+            "Content-Type": "application/json", // Ensuring correct format
+          },
+        }
       );
+
       setFloat(response.data.message);
-      // Clear any existing timeout
       if (window.floatTimeout) {
         clearTimeout(window.floatTimeout);
       }
-      // Set new timeout
       window.floatTimeout = setTimeout(() => {
         setFloat("");
       }, 3000);
     } catch (err) {
       setError("Error adding product to the cart");
-      console.log(err);
+      console.log("Error adding to cart:", err.response?.data || err);
     } finally {
       setLoading(false);
     }

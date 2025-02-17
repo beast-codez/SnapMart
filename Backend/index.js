@@ -139,27 +139,40 @@ app.get("/token", (req, res) => {
 
 app.post("/cart", async (req, res) => {
   console.log("Request received at /cart");
-  const { id } = req.body;
-  const token = req.cookies.authToken;
 
-  if (!token) {
-    console.log("No token provided");
-    return res.status(401).json({ message: "Authorization token is missing" });
+  console.log("Received headers:", req.headers);
+
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    console.log("No token provided or incorrect format:", authHeader);
+    return res
+      .status(401)
+      .json({ message: "Authorization token is missing or invalid" });
   }
+
+  const token = authHeader.split(" ")[1];
+
+  console.log("Extracted token:", token);
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
+    console.log("Decoded token:", decoded);
     const { email } = decoded;
 
-    // Check if the cart document exists for the user
+    const { id } = req.body;
+    if (!id) {
+      console.log("No id provided in request body");
+      return res.status(400).json({ message: "Product ID is required" });
+    }
+
     let userCart = await Cart.findOne({ email });
 
     if (!userCart) {
       console.log("Cart not found, creating a new cart for the user");
-      // Create a new cart document if it doesn't exist
       userCart = await Cart.create({
         email,
-        cart: [id], // Initialize cart with the given item
+        cart: [id],
       });
       return res.status(201).json({
         message: "Cart created and item added",
@@ -167,11 +180,10 @@ app.post("/cart", async (req, res) => {
       });
     }
 
-    // Update the user's cart with the new item
     const updatedUser = await Cart.findOneAndUpdate(
       { email },
-      { $addToSet: { cart: id } }, // Add the product ID to the cart array
-      { new: true } // Return the updated document
+      { $addToSet: { cart: id } },
+      { new: true }
     );
 
     res.status(200).json({
@@ -181,7 +193,6 @@ app.post("/cart", async (req, res) => {
   } catch (error) {
     console.error("Error:", error);
 
-    // Handle token-related errors
     if (error.name === "JsonWebTokenError") {
       return res.status(401).json({ message: "Invalid token" });
     }
@@ -320,15 +331,25 @@ app.get("/pastOrders", async (req, res) => {
 });
 
 app.get("/fetchcart", async (req, res) => {
-  const token = req.cookies.authToken;
+  console.log("Fetching cart...");
 
-  if (!token) {
-    console.log("No token provided");
-    return res.status(401).json({ message: "Authorization token is missing" });
+  // Extract token from headers (instead of cookies)
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    console.log("No token provided or incorrect format:", authHeader);
+    return res
+      .status(401)
+      .json({ message: "Authorization token is missing or invalid" });
   }
+
+  const token = authHeader.split(" ")[1]; // Extract token
+
+  console.log("Extracted token:", token);
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
+    console.log("Decoded token:", decoded);
     const { email } = decoded;
 
     // Find the user's cart
@@ -338,7 +359,7 @@ app.get("/fetchcart", async (req, res) => {
       return res.json({ message: "No items in cart", cart: [] });
     }
 
-    res.json({ message: "Response sent", cart: userCart.cart });
+    res.json({ message: "Cart fetched successfully", cart: userCart.cart });
   } catch (error) {
     console.error("Error fetching cart:", error);
 
@@ -349,28 +370,38 @@ app.get("/fetchcart", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-app.post("/removeFromCart", async (req, res) => {
-  const token = req.cookies.authToken;
 
-  if (!token) {
-    console.log("No token provided");
-    return res.status(401).json({ message: "Authorization token is missing" });
+app.post("/removeFromCart", async (req, res) => {
+  console.log("Request received at /removeFromCart");
+
+  console.log("Received headers:", req.headers);
+
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    console.log("No token provided or incorrect format:", authHeader);
+    return res
+      .status(401)
+      .json({ message: "Authorization token is missing or invalid" });
   }
+
+  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    const { email } = decoded;
+    console.log("Decoded token:", decoded);
 
-    const { id } = req.body; // Destructure 'id' from the request body
+    const { email } = decoded;
+    const { id } = req.body;
+
     if (!id) {
       return res.status(400).json({ message: "Product ID is required" });
     }
 
-    // Find and update the cart
     const updatedUser = await Cart.findOneAndUpdate(
       { email },
-      { $pull: { cart: id } }, // Remove the product ID from the cart array
-      { new: true } // Return the updated document
+      { $pull: { cart: id } },
+      { new: true }
     );
 
     if (!updatedUser || !updatedUser.cart) {
@@ -379,7 +410,7 @@ app.post("/removeFromCart", async (req, res) => {
         .json({ message: "User or cart not found", cart: [] });
     }
 
-    res.json({ message: "success", cart: updatedUser.cart });
+    res.json({ message: "Item removed successfully", cart: updatedUser.cart });
   } catch (error) {
     console.error("Error updating cart:", error);
 
